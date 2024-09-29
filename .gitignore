@@ -5,4 +5,6 @@ out
 *.log*
 scraper_test/
 src/scraper/fetched.ts
+src/scraper/*.json
 .idea
+*.db

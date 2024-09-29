@@ -2,6 +2,8 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { pingCustom } from '../scraper/pingCustom'
+import { html2Courses } from '../scraper/perser'
 
 function createWindow(): void {
   // Create the browser window.
@@ -51,6 +53,9 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+
+  ipcMain.handle('pingCustom', pingCustom)
+  ipcMain.handle('parse', html2Courses)
 
   createWindow()
 

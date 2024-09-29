@@ -3,6 +3,7 @@ import rehypeParse from 'rehype-parse'
 import rehypeStringify from 'rehype-stringify'
 import { rehypeExtendedTable } from 'rehype-extended-table'
 import { Course, CourseTitle, Lecturer } from './type.js'
+import { fetched } from './fetched'
 
 const getCode = (td): string => {
   if (!td.children[0]) return ''
@@ -43,6 +44,9 @@ const getSylbs = (td): string => {
 }
 
 export const html2Courses = async (html: string): Promise<Course[]> => {
+  // dev mode TODO
+  html = fetched
+
   let hast
 
   await unified()

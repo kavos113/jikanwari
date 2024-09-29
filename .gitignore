@@ -4,5 +4,5 @@ out
 .DS_Store
 *.log*
 scraper_test/
-fetched.ts
+src/fetched.ts
 .idea

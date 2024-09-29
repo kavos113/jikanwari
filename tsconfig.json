@@ -1,0 +1,6 @@
+{
+  "files": [
+    "./src/scraper/fetchContent.ts"
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }]
+}

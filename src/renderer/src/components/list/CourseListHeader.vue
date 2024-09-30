@@ -198,7 +198,11 @@ const depertments = {
 
 const isDepartmentMenuOpen = ref(false)
 const openDepartmentMenu = () => {
-  isDepartmentMenuOpen.value = true
+  isDepartmentMenuOpen.value = !isDepartmentMenuOpen.value
+}
+const closeDepartmentMenu = (key) => {
+  departmentQuery.value = key
+  isDepartmentMenuOpen.value = false
 }
 </script>
 
@@ -255,10 +259,23 @@ const openDepartmentMenu = () => {
         </tbody>
       </table>
     </div>
-    <div>
-      <div>
-        <p class="departmentQuery" @click="openDepartmentMenu">{{ departmentQuery }}</p>
-        <CourseListDepartmentMenu v-if="isDepartmentMenuOpen" :items="depertments" />
+    <div class="searchText">
+      <div class="searchBox">
+        <p class="departmentName">開講元</p>
+        <div class="departmentQuery" @click="openDepartmentMenu">
+          <p>{{ departmentQuery }}</p>
+          <div class="menu">
+            <CourseListDepartmentMenu
+              v-if="isDepartmentMenuOpen"
+              :items="depertments"
+              @decide-value="closeDepartmentMenu"
+            />
+          </div>
+        </div>
+        <p class="courseName">講義名</p>
+        <input v-model="titleQuery" class="courseNameSearch" />
+        <p class="lecturer">担当</p>
+        <input v-model="lecturerQuery" class="lecturerSearch" />
       </div>
     </div>
   </div>
@@ -365,12 +382,69 @@ tr:has(.periodHeader:hover) {
   cursor: pointer;
   border: 1px solid #aaa;
   border-radius: 0.5rem;
-  width: 10rem;
   height: 1rem;
   padding: 0.2rem;
+  font-size: 13px;
+  position: relative;
 }
 
 .departmentQuery:hover {
   box-shadow: 0 0 10px #42d392;
+}
+
+.menu {
+  width: 70%;
+  position: absolute;
+  top: 100%;
+}
+
+.searchBox {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-gap: 1rem;
+  margin-top: 0.7rem;
+}
+
+.departmentName {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.departmentQuery {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.courseName {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.courseNameSearch {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.lecturer {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.lecturerSearch {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.courseNameSearch,
+.lecturerSearch {
+  border: 1px solid #aaa;
+  border-radius: 0.5rem;
+  padding: 0.2rem;
+  font-size: 13px;
+}
+
+.searchText {
+  flex-grow: 1;
 }
 </style>

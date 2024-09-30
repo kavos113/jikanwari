@@ -5,6 +5,10 @@ body {
   font-weight: 400;
 }
 
+#app {
+  min-height: 100vh;
+}
+
 * {
   margin: 0;
 }

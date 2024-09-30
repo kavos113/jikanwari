@@ -16,5 +16,6 @@ import Timetable from '@renderer/components/timetable/Timetable.vue'
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   padding: 1rem;
+  height: calc(100vh - 2rem);
 }
 </style>

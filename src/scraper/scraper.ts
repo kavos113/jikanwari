@@ -29,7 +29,7 @@ export const scrape = async () => {
 
       await new Promise((resolve) => setTimeout(resolve, 3000))
 
-      const resp = await fetch(course.url)
+      const resp = await fetch(course.title.url)
       const htmlDetail = await resp.text()
       const courseDetail = html2CourseDetail(htmlDetail)
 
@@ -43,27 +43,35 @@ export const scrape = async () => {
 }
 
 export const scrape_test = async () => {
-  const res = await fetch(
-    'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=1&lang=JA'
-  )
-  const html = await res.text()
+  console.log('start scraping courses')
+  // const res = await fetch(
+  //   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=1&lang=JA'
+  // )
+  // const html = await res.text()
+  // console.log(html.slice(0, 1000))
 
-  const courses = html2Courses(html)
+  //const courses = html2Courses(html)
 
-  const course = courses[0]
+  console.log('finish scraping courses')
 
-  const status = needAction(course.code, course.sylbs_update)
+  //const course = courses[0]
+
+  //const status = needAction(course.code, course.sylbs_update)
+  const status = await needAction('ART.T548', '2024/7/4')
   if (status === 'skip' || status === 'error') return
 
-  const res2 = await fetch(course.url)
-  const html2 = await res2.text()
-  const courseDetail = html2CourseDetail(html2)
+  //const res2 = await fetch(course.title.url)
+  //const html2 = await res2.text()
+  //const courseDetail = html2CourseDetail(html2)
 
-  if (status === 'insert') {
-    insertCourse(courseDetail)
-  } else {
-    updateCourse(courseDetail)
-  }
+  console.log('status: ', status)
+  //console.log(courseDetail)
+
+  // if (status === 'insert') {
+  //   insertCourse(courseDetail)
+  // } else {
+  //   updateCourse(courseDetail)
+  // }
 
   console.log('finish scraping')
 }

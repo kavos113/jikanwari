@@ -34,9 +34,9 @@ export const scrape = async () => {
       const courseDetail = html2CourseDetail(htmlDetail)
 
       if (status === 'insert') {
-        insertCourse(courseDetail)
+        await insertCourse(courseDetail)
       } else {
-        updateCourse(courseDetail)
+        await updateCourse(courseDetail)
       }
     }
   }
@@ -68,9 +68,9 @@ export const scrape_test = async () => {
   //console.log(courseDetail)
 
   // if (status === 'insert') {
-  //   insertCourse(courseDetail)
+  //   await insertCourse(courseDetail)
   // } else {
-  //   updateCourse(courseDetail)
+  //   await updateCourse(courseDetail)
   // }
 
   console.log('finish scraping')

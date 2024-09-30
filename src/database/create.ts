@@ -40,6 +40,17 @@ export const createDatabase = () => {
         FOREIGN KEY (course_id) REFERENCES courses(id)
       );
     `)
+    db.run(`
+    CREATE TABLE IF NOT EXISTS user_timetables (
+      id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+      course_id INTEGER NOT NULL,
+      year INTEGER NOT NULL,
+      quarter INTEGER NOT NULL,
+      day_of_week TEXT NOT NULL,
+      period INTEGER NOT NULL,
+      FOREIGN KEY (course_id) REFERENCES courses(id)
+    )
+    `)
   })
 
   console.log('Database initialized successfully')

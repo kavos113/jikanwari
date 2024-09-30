@@ -3,6 +3,10 @@ import { ref, watch } from 'vue'
 import { Period, SearchQuery } from '../../../../types/search.js'
 import CourseListDepartmentMenu from '@renderer/components/list/CourseListDepartmentMenu.vue'
 
+const emits = defineEmits<{
+  (event: 'changeQuery', value: SearchQuery): void
+}>()
+
 const grades = ref<string[]>(['100', '200', '300', '400', '500', '600'])
 const quarters = ref<string[]>(['1Q', '2Q', '3Q', '4Q'])
 const days = ref<string[]>(['月', '火', '水', '木', '金'])
@@ -34,26 +38,32 @@ const lecturerQuery = ref<string>('')
 
 watch(gradesQuery, () => {
   query.value.grades = gradesQuery.value
+  emits('changeQuery', query.value)
 })
 
 watch(quartersQuery, () => {
   query.value.quarters = quartersQuery.value
+  emits('changeQuery', query.value)
 })
 
 watch(periodsQuery, () => {
   query.value.periods = periodsQuery.value
+  emits('changeQuery', query.value)
 })
 
 watch(departmentQuery, () => {
   query.value.department = departmentQuery.value
+  emits('changeQuery', query.value)
 })
 
 watch(titleQuery, () => {
   query.value.title = titleQuery.value
+  emits('changeQuery', query.value)
 })
 
 watch(lecturerQuery, () => {
   query.value.lecturer = lecturerQuery.value
+  emits('changeQuery', query.value)
 })
 
 const clickPeriod = (period: string) => {
@@ -70,6 +80,7 @@ const clickPeriod = (period: string) => {
         return item.day_of_week !== day || item.period !== period
       })
     })
+    emits('changeQuery', query.value)
     return
   }
   days.value.forEach((day) => {
@@ -80,6 +91,7 @@ const clickPeriod = (period: string) => {
     checkbox.checked = true
     periodsQuery.value.push({ day_of_week: day, period })
   })
+  emits('changeQuery', query.value)
 }
 
 const clickDay = (day: string) => {
@@ -96,6 +108,7 @@ const clickDay = (day: string) => {
         return item.day_of_week !== day || item.period !== period
       })
     })
+    emits('changeQuery', query.value)
     return
   }
   periods.value.forEach((period) => {
@@ -106,6 +119,7 @@ const clickDay = (day: string) => {
     checkbox.checked = true
     periodsQuery.value.push({ day_of_week: day, period })
   })
+  emits('changeQuery', query.value)
 }
 
 const depertments = {

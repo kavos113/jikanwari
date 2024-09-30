@@ -1,4 +1,4 @@
-export interface SearchQuery {
+export type SearchQuery = {
   grades: string[]
   quarters: string[]
   periods: Period[]

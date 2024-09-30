@@ -24,7 +24,7 @@ export const scrape = async () => {
     const courses = html2Courses(html)
 
     for (const course of courses) {
-      const status = needAction(course.code, course.sylbs_update)
+      const status = await needAction(course.code, course.sylbs_update)
       if (status === 'skip' || status === 'error') continue
 
       await new Promise((resolve) => setTimeout(resolve, 3000))
@@ -44,34 +44,34 @@ export const scrape = async () => {
 
 export const scrape_test = async () => {
   console.log('start scraping courses')
-  // const res = await fetch(
-  //   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=1&lang=JA'
-  // )
-  // const html = await res.text()
-  // console.log(html.slice(0, 1000))
+  const res = await fetch(
+    'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=1&lang=JA'
+  )
+  const html = await res.text()
+  console.log(html.slice(0, 1000))
 
-  //const courses = html2Courses(html)
+  const courses = html2Courses(html)
 
   console.log('finish scraping courses')
 
-  //const course = courses[0]
+  const course = courses[0]
 
-  //const status = needAction(course.code, course.sylbs_update)
-  const status = await needAction('ART.T548', '2024/7/4')
+  const status = await needAction(course.code, course.sylbs_update)
+  //const status = await needAction('ART.T548', '2024/7/4')
   if (status === 'skip' || status === 'error') return
 
-  //const res2 = await fetch(course.title.url)
-  //const html2 = await res2.text()
-  //const courseDetail = html2CourseDetail(html2)
+  const res2 = await fetch(course.title.url)
+  const html2 = await res2.text()
+  const courseDetail = html2CourseDetail(html2)
 
   console.log('status: ', status)
-  //console.log(courseDetail)
+  console.log(courseDetail)
 
-  // if (status === 'insert') {
-  //   await insertCourse(courseDetail)
-  // } else {
-  //   await updateCourse(courseDetail)
-  // }
+  if (status === 'insert') {
+    await insertCourse(courseDetail, course.title.url)
+  } else {
+    await updateCourse(courseDetail, course.title.url)
+  }
 
   console.log('finish scraping')
 }

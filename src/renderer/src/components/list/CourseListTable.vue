@@ -3,36 +3,14 @@ import { CourseListItem } from '../../../../types/course.js'
 import { ref } from 'vue'
 import CourseListCard from '@renderer/components/list/CourseListCard.vue'
 
-const data = ref<CourseListItem[]>([
-  {
-    code: 'PHY.S209',
-    title: '熱力学（物理）(講義）',
-    english_title: 'Thermodynamics (Physics) (Lecture)',
-    lecturer: [
-      {
-        name: '笹本 智弘',
-        url: 'https://www.ocw.titech.ac.jp/index.php?module=General&action=StaffInfo&id=489'
-      }
-    ],
-    department: '物理学系',
-    start: '2024年度 3Q',
-    lecture_type: '講義 (対面型)',
-    language: '日本語',
-    credits: 1,
-    timetable: [
-      {
-        day_of_week: '火',
-        period: '3-4',
-        room: 'M-178(H1101)'
-      }
-    ]
-  }
-])
+const props = defineProps<{
+  data: CourseListItem[]
+}>()
 
 const isDetail = ref<boolean>(false)
 
 const timetable = ref<string[]>([])
-data.value.forEach((item) => {
+props.data.forEach((item) => {
   const text = item.timetable
     .map((item) => {
       return `${item.day_of_week} ${item.period}限 ${item.room}`
@@ -62,7 +40,7 @@ data.value.forEach((item) => {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, i) in data" :key="item.code">
+        <tr v-for="(item, i) in props.data" :key="item.code">
           <td>{{ item.code }}</td>
           <td>{{ item.title }}</td>
           <td>

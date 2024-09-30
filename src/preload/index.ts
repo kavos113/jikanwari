@@ -1,11 +1,13 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { SearchQuery } from '../types/search.js'
 
 // Custom APIs for renderer
 const api = {
   scrape: () => ipcRenderer.invoke('scrape'),
   scrapeTest: () => ipcRenderer.invoke('scrapeTest'),
-  pingCustom: () => ipcRenderer.invoke('pingCustom')
+  pingCustom: () => ipcRenderer.invoke('pingCustom'),
+  search: (query: SearchQuery) => ipcRenderer.invoke('search', query)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

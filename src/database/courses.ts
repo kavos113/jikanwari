@@ -2,13 +2,14 @@ import { CourseDetail, CourseListItem, Timetable } from '../types/course.js'
 import { db } from './create.js'
 import { SearchQuery } from '../types/search.js'
 
-export const insertCourse = async (course: CourseDetail) => {
+export const insertCourse = async (course: CourseDetail, url: string) => {
   return new Promise((resolve, reject) => {
-    db.run(
-      `
+    db.serialize(async () => {
+      db.run(
+        `
       INSERT INTO courses (
         code,
-                           grade,
+        grade,
         course_title,
         english_title,
         url,
@@ -23,26 +24,26 @@ export const insertCourse = async (course: CourseDetail) => {
         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
       );
     `,
-      course.code,
-      parseInt(course.code[5]) * 100,
-      course.title.title,
-      course.english_title,
-      course.title.url,
-      course.department,
-      course.start,
-      course.sylbs_update,
-      course.lecture_type,
-      course.language,
-      course.credits,
-      course.detailsHTML
-    )
+        course.code,
+        parseInt(course.code[5]) * 100,
+        course.title,
+        course.english_title,
+        url,
+        course.department,
+        course.start,
+        course.sylbs_update,
+        course.lecture_type,
+        course.language,
+        course.credits,
+        course.detailsHTML
+      )
 
-    db.serialize(() => {
-      db.all('SELECT id FROM courses WHERE code = ?', course.code, (err, rows) => {
+      db.all('SELECT id FROM courses WHERE code = ?', course.code, async (err, rows) => {
         if (err) {
           console.error(err)
           reject('error')
         } else {
+          console.log(rows)
           await insertLecturers(rows[0].id, course)
           await insertTimetable(rows[0].id, course)
         }
@@ -96,7 +97,7 @@ const insertTimetable = async (courseId: number, course: CourseDetail) => {
   })
 }
 
-export const updateCourse = async (course: CourseDetail) => {
+export const updateCourse = async (course: CourseDetail, url: string) => {
   return new Promise((resolve, reject) => {
     db.run(
       `
@@ -115,9 +116,9 @@ export const updateCourse = async (course: CourseDetail) => {
         WHERE code = ?;
       `,
       parseInt(course.code[5]) * 100,
-      course.title.title,
+      course.title,
       course.english_title,
-      course.title.url,
+      url,
       course.department,
       course.start,
       course.sylbs_update,
@@ -128,14 +129,14 @@ export const updateCourse = async (course: CourseDetail) => {
       course.code
     )
 
-    db.serialize(() => {
-      db.all('SELECT id FROM courses WHERE code = ?', course.code, (err, rows) => {
+    db.serialize(async () => {
+      db.all('SELECT id FROM courses WHERE code = ?', course.code, async (err, rows) => {
         if (err) {
           console.error(err)
           reject('error')
         } else {
-          updateLecturers(rows[0].id, course)
-          updateTimetable(rows[0].id, course)
+          await updateLecturers(rows[0].id, course)
+          await updateTimetable(rows[0].id, course)
         }
       })
     })
@@ -190,7 +191,7 @@ const updateTimetable = async (courseId: number, course: CourseDetail) => {
   })
 }
 
-export const needAction = (code: string, sylbs_update: string): Promise<string> => {
+export const needAction = async (code: string, sylbs_update: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
       db.get('SELECT sylbs_update FROM courses WHERE code = ?', code, (err, row) => {
@@ -211,9 +212,9 @@ export const needAction = (code: string, sylbs_update: string): Promise<string> 
   })
 }
 
-export const searchCourses = async (query: SearchQuery): CourseListItem[] => {
+export const searchCourses = async (query: SearchQuery): Promise<CourseListItem[]> => {
   return new Promise((resolve, reject) => {
-    const dbQuery = `
+    let dbQuery = `
       SELECT id,
              code,
              course_title,
@@ -223,117 +224,109 @@ export const searchCourses = async (query: SearchQuery): CourseListItem[] => {
              credits,
              lecture_type,
              language
-      FROM courses
-      WHERE grade IN (${query.grades.join(',')})
-        AND opening_department = ?
-        AND start LIKE ?`
+      FROM courses`
+    const params = []
 
-    let courses: CourseListItem[] = []
-    db.serialize(() => {
-      db.all(dbQuery, query.department, query.quarters[0], (err, rows) => {
-        if (err) {
-          console.error(err)
-          reject('error')
-        } else {
-          courses = rows.map((row) => {
-            return {
-              id: row.id,
-              code: row.code,
-              title: row.course_title,
-              english_title: row.english_title,
-              department: row.opening_department,
-              start: row.start,
-              credits: row.credits,
-              lecture_type: row.lecture_type
-            }
-          })
-        }
-      })
-    })
-
-    const getLeturerQuery = `
-      SELECT name,
-             url
-      FROM lecturers
-      WHERE course_id = ?`
-
-    db.serialize(() => {
-      courses.forEach((course) => {
-        db.all(getLeturerQuery, course.id, (err, rows) => {
-          if (err) {
-            console.error(err)
-            reject('error')
-          } else {
-            course.lecturer = rows.map((row) => {
-              return {
-                name: row.name,
-                url: row.url
-              }
-            })
-          }
-        })
-      })
-    })
-
-    const timetables: Timetable[] = []
-    const getTimetableQuery = `
-      SELECT day_of_week,
-             period,
-             room
-      FROM timetable
-      WHERE course_id = ?`
-    db.serialize(() => {
-      courses.forEach((course) => {
-        db.all(getTimetableQuery, course.id, (err, rows) => {
-          if (err) {
-            console.error(err)
-            reject('error')
-          } else {
-            const ret = rows.map((row) => {
-              return {
-                course_id: course.id,
-                day_of_week: row.day_of_week,
-                period: row.period,
-                room: row.room
-              }
-            })
-            timetables.push(...ret)
-          }
-        })
-      })
-    })
-
-    const periods: EachPeriod[] = []
-
-    query.periods.forEach((period) => {
-      const [start, end] = period.period.split('-')
-      for (let i = parseInt(start); i <= parseInt(end); i++) {
-        periods.push({
-          day_of_week: period.day_of_week,
-          period: i
-        })
+    if (query.grades.length > 0) {
+      dbQuery += ` WHERE grade IN (${query.grades.join(',')})`
+      if (query.department) {
+        dbQuery += ` AND opening_department = ?`
+        params.push(query.department)
       }
-    })
+      if (query.quarters.length > 0) {
+        dbQuery += ` AND (${query.quarters.map(() => 'start LIKE ?').join(' OR ')})`
+        params.push(...query.quarters.map((q) => `%${q}%`))
+      }
+    } else {
+      if (query.department) {
+        dbQuery += ` WHERE opening_department = ?`
+        params.push(query.department)
+        if (query.quarters.length > 0) {
+          dbQuery += ` AND (${query.quarters.map(() => 'start LIKE ?').join(' OR ')})`
+          params.push(...query.quarters.map((q) => `%${q}%`))
+        }
+      } else {
+        if (query.quarters.length > 0) {
+          dbQuery += ` WHERE (${query.quarters.map(() => 'start LIKE ?').join(' OR ')})`
+          params.push(...query.quarters.map((q) => `%${q}%`))
+        }
+      }
+    }
 
-    courses = courses.filter((course) => {
-      return timetables.some((timetable) => {
-        return (
-          timetable.course_id === course.id &&
-          // period(検索クエリ)にtimetableで取得した曜日と時限が含まれているか
-          periods.some((period) => {
-            return (
-              timetable.day_of_week === period.day_of_week && timetable.period === period.period
-            )
+    db.all(dbQuery, params, (err, rows) => {
+      if (err) {
+        console.log('error in firstselect')
+        console.error(err)
+        return reject('error')
+      }
+
+      const courses: CourseDetail[] = rows.map((row) => ({
+        id: row.id,
+        code: row.code,
+        title: row.course_title,
+        english_title: row.english_title,
+        department: row.opening_department,
+        start: row.start,
+        credits: row.credits,
+        lecture_type: row.lecture_type,
+        language: row.language
+      }))
+
+      const courseIds = courses.map((course) => course.id)
+      const lecturerQuery = `
+        SELECT name, url, course_id
+        FROM lecturers
+        WHERE course_id IN (${courseIds.join(',')})
+      `
+      const timetableQuery = `
+        SELECT day_of_week, period, room, course_id
+        FROM timetable
+        WHERE course_id IN (${courseIds.join(',')})
+      `
+
+      db.all(lecturerQuery, (err, lecturers) => {
+        if (err) {
+          console.log('error in secondselect')
+          console.error(err)
+          return reject('error')
+        }
+
+        db.all(timetableQuery, (err, timetables) => {
+          if (err) {
+            console.error(err)
+            console.log('error in thirdselect')
+            return reject('error')
+          }
+
+          courses.forEach((course) => {
+            course.lecturer = lecturers.filter((l) => l.course_id === course.id)
+            course.timetable = timetables.filter((t) => t.course_id === course.id)
           })
-        )
+
+          const periods = query.periods.flatMap((period) => {
+            const [start, end] = period.period.split('-').map(Number)
+            return Array.from({ length: end - start + 1 }, (_, i) => ({
+              day_of_week: period.day_of_week,
+              period: start + i
+            }))
+          })
+
+          if (periods.length === 0) {
+            return resolve(courses)
+          }
+
+          const filteredCourses = courses.filter((course) =>
+            course.timetable.some((timetable) =>
+              periods.some(
+                (period) =>
+                  timetable.day_of_week === period.day_of_week && timetable.period === period.period
+              )
+            )
+          )
+
+          resolve(filteredCourses)
+        })
       })
     })
-
-    resolve(courses)
   })
-}
-
-type EachPeriod = {
-  day_of_week: string
-  period: number
 }

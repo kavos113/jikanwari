@@ -9,12 +9,14 @@ export const createDatabase = () => {
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         code TEXT NOT NULL ,
         course_title TEXT NOT NULL ,
+        english_title TEXT NOT NULL ,
         url TEXT NOT NULL ,
         opening_department TEXT NOT NULL ,
         start TEXT NOT NULL ,
         sylbs_update TEXT NOT NULL,
         lecture_type TEXT NOT NULL,
         language TEXT NOT NULL,
+        credits INTEGER NOT NULL,
         details TEXT NOT NULL
       );
     `)
@@ -33,6 +35,7 @@ export const createDatabase = () => {
         course_id INTEGER NOT NULL,
         day_of_week TEXT NOT NULL,
         period INTEGER NOT NULL,
+        room TEXT,
         FOREIGN KEY (course_id) REFERENCES courses(id)
       );
     `)

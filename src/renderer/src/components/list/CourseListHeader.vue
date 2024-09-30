@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { Period, SearchQuery } from '../../../../types/search.js'
+import CourseListDepartmentMenu from '@renderer/components/list/CourseListDepartmentMenu.vue'
 
 const grades = ref<string[]>(['100', '200', '300', '400', '500', '600'])
 const quarters = ref<string[]>(['1Q', '2Q', '3Q', '4Q'])
@@ -106,6 +107,99 @@ const clickDay = (day: string) => {
     periodsQuery.value.push({ day_of_week: day, period })
   })
 }
+
+const depertments = {
+  学士課程: {
+    理学院: ['数学系', '物理学系', '化学系', '地球惑星科学系'],
+    工学院: ['機械系', 'システム制御系', '電気電子系', '情報通信系', '経営工学系'],
+    物質理工学院: ['材料系', '応用化学系'],
+    情報理工学院: ['数理・計算科学系', '情報工学系'],
+    生命理工学院: ['生命理工学系'],
+    '環境・社会理工学院': ['建築学系', '土木・環境工学系', '融合理工学系'],
+    '工学院，物質理工学院，環境・社会理工学院共通科目': [
+      '工学院，物質理工学院，環境・社会理工学院共通科目'
+    ],
+    教養科目群: [
+      '文系教養科目',
+      '英語科目',
+      '第二外国語科目',
+      '日本語・日本文化科目',
+      '教職科目',
+      'アントレプレナーシップ科目',
+      '広域教養科目',
+      '理工系教養科目'
+    ]
+  },
+  大学院課程: {
+    理学院: [
+      '数学コース',
+      '物理学コース',
+      '化学コース',
+      'エネルギーコース',
+      'エネルギー・情報コース',
+      '地球惑星科学コース',
+      '地球生命コース'
+    ],
+    工学院: [
+      '機械コース',
+      'エネルギーコース',
+      'エネルギー・情報コース',
+      'エンジニアリングデザインコース',
+      'ライフエンジニアリングコース',
+      '原子核工学コース',
+      'システム制御コース',
+      '電気電子コース',
+      '情報通信コース',
+      '経営工学コース'
+    ],
+    物質理工学院: [
+      '材料コース',
+      '応用化学コース',
+      'エネルギーコース',
+      'エネルギー・情報コース',
+      'ライフエンジニアリングコース',
+      '原子核工学コース',
+      '地球生命コース'
+    ],
+    情報理工学院: [
+      '数理・計算科学コース',
+      '情報工学コース',
+      '知能情報コース',
+      'エネルギー・情報コース',
+      'ライフエンジニアリングコース'
+    ],
+    生命理工学院: ['生命理工学コース', 'ライフエンジニアリングコース', '地球生命コース'],
+    '環境・社会理工学院': [
+      '建築学コース',
+      '土木工学コース',
+      '融合理工学コース',
+      'エンジニアリングデザインコース',
+      '都市・環境学コース',
+      '地球環境共創コース',
+      'エネルギーコース',
+      'エネルギー・情報コース',
+      '原子核工学コース',
+      '社会・人間科学コース',
+      'イノベーション科学コース',
+      '技術経営専門職学位課程'
+    ],
+    教養科目群: [
+      '文系教養科目',
+      '英語科目',
+      '第二外国語科目',
+      '日本語・日本文化科目',
+      '教職科目',
+      'アントレプレナーシップ科目',
+      '広域教養科目',
+      'キャリア科目'
+    ]
+  }
+}
+
+const isDepartmentMenuOpen = ref(false)
+const openDepartmentMenu = () => {
+  isDepartmentMenuOpen.value = true
+}
 </script>
 
 <template>
@@ -160,6 +254,12 @@ const clickDay = (day: string) => {
           </tr>
         </tbody>
       </table>
+    </div>
+    <div>
+      <div>
+        <p class="departmentQuery" @click="openDepartmentMenu">{{ departmentQuery }}</p>
+        <CourseListDepartmentMenu v-if="isDepartmentMenuOpen" :items="depertments" />
+      </div>
     </div>
   </div>
   <div>
@@ -259,5 +359,18 @@ tr:has(.periodHeader:hover) {
 
 .checkboxTable:has(.col-6:hover) td:nth-child(6) {
   background-color: rgba(66, 211, 146, 0.2);
+}
+
+.departmentQuery {
+  cursor: pointer;
+  border: 1px solid #aaa;
+  border-radius: 0.5rem;
+  width: 10rem;
+  height: 1rem;
+  padding: 0.2rem;
+}
+
+.departmentQuery:hover {
+  box-shadow: 0 0 10px #42d392;
 }
 </style>

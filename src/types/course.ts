@@ -37,3 +37,22 @@ export interface Timetable {
   period: number
   room: string | undefined
 }
+
+export interface TimetableDisplay {
+  day_of_week: string
+  period: string
+  room: string | undefined
+}
+
+export interface CourseListItem {
+  code: string
+  title: string
+  english_title: string
+  lecturer: string
+  department: string
+  start: string
+  timetable: TimetableDisplay[]
+  credits: number
+  lecture_type: string
+  language: string
+}

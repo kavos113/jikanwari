@@ -13,7 +13,7 @@ const getTitleDetail = (
   const [title, english_title] = text.split('&nbsp;&nbsp;&nbsp;')
 
   return {
-    title: title.trim(),
+    title: title.slice(7), //2024年度＜スペース＞
     english_title: english_title.trim()
   }
 }
@@ -50,7 +50,7 @@ const getTimetable = (dl): Timetable[] => {
 
   if (text === '') return []
 
-  const infos = text.split('&npsp;&nbsp;').slice(0, -1)
+  const infos = text.split('&nbsp;&nbsp;').slice(0, -1)
 
   const timetable: Timetable[] = []
   infos.forEach((info) => {

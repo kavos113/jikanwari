@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3'
 
-export const db = new sqlite3.Database('../../sqlite/database.db')
+export const db = new sqlite3.Database('./database.db')
 
 export const createDatabase = () => {
   db.serialize(() => {
@@ -41,5 +41,5 @@ export const createDatabase = () => {
     `)
   })
 
-  console.log('Database created')
+  console.log('Database initialized successfully')
 }

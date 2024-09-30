@@ -29,9 +29,9 @@ export const scrape = async () => {
 
       await new Promise((resolve) => setTimeout(resolve, 3000))
 
-      const res = await fetch(course.url)
-      const html = await res.text()
-      const courseDetail = html2CourseDetail(html)
+      const resp = await fetch(course.url)
+      const htmlDetail = await resp.text()
+      const courseDetail = html2CourseDetail(htmlDetail)
 
       if (status === 'insert') {
         insertCourse(courseDetail)
@@ -53,11 +53,11 @@ export const scrape_test = async () => {
   const course = courses[0]
 
   const status = needAction(course.code, course.sylbs_update)
-  if (status === 'skip' || status === 'error') continue
+  if (status === 'skip' || status === 'error') return
 
-  const res = await fetch(course.url)
-  const html = await res.text()
-  const courseDetail = html2CourseDetail(html)
+  const res2 = await fetch(course.url)
+  const html2 = await res2.text()
+  const courseDetail = html2CourseDetail(html2)
 
   if (status === 'insert') {
     insertCourse(courseDetail)

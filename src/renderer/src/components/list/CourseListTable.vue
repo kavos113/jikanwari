@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { CourseListItem } from '../../../../types/course.js'
 import { ref } from 'vue'
+import CourseListCard from '@renderer/components/list/CourseListCard.vue'
 
 const data = ref<CourseListItem[]>([
   {
@@ -28,6 +29,8 @@ const data = ref<CourseListItem[]>([
   }
 ])
 
+const isDetail = ref<boolean>(false)
+
 const timetable = ref<string[]>([])
 data.value.forEach((item) => {
   const text = item.timetable
@@ -40,7 +43,12 @@ data.value.forEach((item) => {
 </script>
 
 <template>
-  <div>
+  <input id="courseDetail" v-model="isDetail" type="checkbox" />
+  <label for="courseDetail">詳細表示</label>
+  <div v-if="isDetail">
+    <CourseListCard v-for="item in data" :key="item.code" :course="item" />
+  </div>
+  <div v-else>
     <table class="table">
       <thead>
         <tr>

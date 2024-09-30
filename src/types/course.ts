@@ -48,7 +48,7 @@ export interface CourseListItem {
   code: string
   title: string
   english_title: string
-  lecturer: string
+  lecturer: Lecturer[]
   department: string
   start: string
   timetable: TimetableDisplay[]

@@ -40,4 +40,6 @@ export const createDatabase = () => {
       );
     `)
   })
+
+  console.log('Database created')
 }

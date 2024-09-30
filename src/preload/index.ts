@@ -3,7 +3,8 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
 const api = {
-  parse: () => ipcRenderer.invoke('parse'),
+  scrape: () => ipcRenderer.invoke('scrape'),
+  scrapeTest: () => ipcRenderer.invoke('scrapeTest'),
   pingCustom: () => ipcRenderer.invoke('pingCustom')
 }
 

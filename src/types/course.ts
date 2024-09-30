@@ -33,6 +33,7 @@ export interface CourseDetail {
 }
 
 export interface Timetable {
+  course_id: number | undefined
   day_of_week: string
   period: number
   room: string | undefined
@@ -45,6 +46,7 @@ export interface TimetableDisplay {
 }
 
 export interface CourseListItem {
+  id: number
   code: string
   title: string
   english_title: string

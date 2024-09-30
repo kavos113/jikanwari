@@ -8,6 +8,7 @@ export const createDatabase = () => {
       CREATE TABLE IF NOT EXISTS courses (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         code TEXT NOT NULL ,
+        grade INTEGER NOT NULL,
         course_title TEXT NOT NULL ,
         english_title TEXT NOT NULL ,
         url TEXT NOT NULL ,

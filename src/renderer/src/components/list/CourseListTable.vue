@@ -9,7 +9,8 @@ const props = defineProps<{
 }>()
 
 const isDetail = ref<boolean>(false)
-const isShowCourseDetail = ref<boolean>(true)
+const isShowCourseDetail = ref<boolean>(false)
+const isShowCourseDetailOverlay = ref<boolean>(false)
 
 const timetable = ref<string[]>([])
 props.data.forEach((item) => {
@@ -22,7 +23,14 @@ props.data.forEach((item) => {
 })
 
 const openDetail = () => {
-  isDetail.value = !isDetail.value
+  isShowCourseDetail.value = true
+  isShowCourseDetailOverlay.value = true
+}
+
+const closeDetail = async () => {
+  isShowCourseDetail.value = false
+  await new Promise((resolve) => setTimeout(resolve, 250))
+  isShowCourseDetailOverlay.value = false
 }
 
 const sample: CourseDetail = {
@@ -79,8 +87,12 @@ const sample: CourseDetail = {
       </thead>
       <tbody>
         <tr v-for="(item, i) in props.data" :key="item.code">
-          <td>{{ item.code }}</td>
-          <td>{{ item.title }}</td>
+          <td class="openDetail" @click="openDetail">
+            <p>{{ item.code }}</p>
+          </td>
+          <td class="openDetail" @click="openDetail">
+            <p>{{ item.title }}</p>
+          </td>
           <td>
             <a :href="item.lecturer[0].url">{{ item.lecturer[0].name }}</a>
           </td>
@@ -92,7 +104,12 @@ const sample: CourseDetail = {
       </tbody>
     </table>
   </div>
-  <CourseDetailView v-if="isShowCourseDetail" :data="sample" class="detail" />
+  <CourseDetailView :data="sample" class="detail" :class="{ detailActive: isShowCourseDetail }" />
+  <div
+    class="overlay"
+    :class="{ overlayActive: isShowCourseDetail, overlayZIndex: isShowCourseDetailOverlay }"
+    @click="closeDetail"
+  ></div>
 </template>
 
 <style scoped>
@@ -119,8 +136,48 @@ const sample: CourseDetail = {
   top: 0;
   right: 0;
   background-color: white;
-  width: 50%;
+  width: 60%;
   height: 100%;
   overflow-y: scroll;
+  z-index: 2;
+  transform: translateX(110%);
+  transition-property: transform;
+  transition-duration: 0.25s;
+  box-shadow: -5px 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.detailActive {
+  z-index: 2;
+  transform: translateX(0);
+}
+
+.openDetail {
+  cursor: pointer;
+}
+
+.openDetail p:hover {
+  color: #42d392;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: -1;
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 0.25s;
+}
+
+.overlayActive {
+  z-index: 1;
+  opacity: 1;
+}
+
+.overlayZIndex {
+  z-index: 1;
 }
 </style>

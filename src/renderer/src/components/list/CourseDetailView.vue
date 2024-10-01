@@ -68,7 +68,7 @@ const props = defineProps<{
 
 <style scoped>
 .wrapper {
-  padding: 1rem;
+  padding: 1rem 2rem;
   font-size: 0.8rem;
 }
 

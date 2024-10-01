@@ -40,12 +40,6 @@ export interface Timetable {
   room: string | undefined
 }
 
-export interface TimetableDisplay {
-  day_of_week: string
-  period: string
-  room: string | undefined
-}
-
 export interface CourseListItem {
   id: number
   code: string
@@ -54,7 +48,7 @@ export interface CourseListItem {
   lecturer: Lecturer[]
   department: string
   start: string
-  timetable: TimetableDisplay[]
+  timetable: Timetable[]
   credits: number
   lecture_type: string
   language: string

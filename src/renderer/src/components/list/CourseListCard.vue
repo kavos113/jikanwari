@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { CourseListItem } from '../../../../types/course.js'
 import { ref } from 'vue'
+import { periodStringAdapter } from '../../../../util/adapter.js'
 
 const props = defineProps<{
   course: CourseListItem
@@ -8,7 +9,7 @@ const props = defineProps<{
 
 const timetable = ref<string>('')
 props.course.timetable.forEach((time) => {
-  timetable.value += `${time.day_of_week}${time.period}限 ${time.room}`
+  timetable.value += `${time.day_of_week}${periodStringAdapter(time.period)}限 ${time.room} `
 })
 </script>
 

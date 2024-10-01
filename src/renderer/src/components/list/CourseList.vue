@@ -25,7 +25,7 @@ const data = ref<CourseListItem[]>([
     timetable: [
       {
         day_of_week: '火',
-        period: '3-4',
+        period: 2,
         room: 'M-178(H1101)'
       }
     ]

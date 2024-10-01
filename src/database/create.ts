@@ -35,7 +35,7 @@ export const createDatabase = () => {
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         course_id INTEGER NOT NULL,
         day_of_week TEXT NOT NULL,
-        period INTEGER NOT NULL,
+        period INTEGER NOT NULL, -- 1-5
         room TEXT,
         FOREIGN KEY (course_id) REFERENCES courses(id)
       );

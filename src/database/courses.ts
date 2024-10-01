@@ -1,6 +1,7 @@
 import { CourseDetail, CourseListItem, Timetable } from '../types/course.js'
 import { db } from './create.js'
 import { SearchQuery } from '../types/search.js'
+import { periodAdapter } from '../util/adapter.js'
 
 export const insertCourse = async (course: CourseDetail, url: string) => {
   return new Promise((resolve, reject) => {
@@ -303,13 +304,10 @@ export const searchCourses = async (query: SearchQuery): Promise<CourseListItem[
             course.timetable = timetables.filter((t) => t.course_id === course.id)
           })
 
-          const periods = query.periods.flatMap((period) => {
-            const [start, end] = period.period.split('-').map(Number)
-            return Array.from({ length: end - start + 1 }, (_, i) => ({
-              day_of_week: period.day_of_week,
-              period: start + i
-            }))
-          })
+          const periods = query.periods.map((period) => ({
+            day_of_week: period.day_of_week,
+            period: periodAdapter(period.period)
+          }))
 
           if (periods.length === 0) {
             return resolve(courses)

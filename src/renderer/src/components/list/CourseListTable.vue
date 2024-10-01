@@ -2,6 +2,7 @@
 import { CourseListItem, CourseDetail } from '../../../../types/course.js'
 import { ref } from 'vue'
 import CourseListCard from '@renderer/components/list/CourseListCard.vue'
+import { periodStringAdapter } from '../../../../util/adapter.js'
 
 const props = defineProps<{
   data: CourseListItem[]
@@ -17,9 +18,9 @@ const timetable = ref<string[]>([])
 props.data.forEach((item) => {
   const text = item.timetable
     .map((item) => {
-      return `${item.day_of_week} ${item.period}限 ${item.room}`
+      return `${item.day_of_week}${periodStringAdapter(item.period)}`
     })
-    .join('\n')
+    .join(' ')
   timetable.value.push(text)
 })
 
@@ -48,12 +49,7 @@ const sample: CourseDetail = {
   timetable: [
     {
       day_of_week: '火',
-      period: 3,
-      room: 'M-178(H1101)'
-    },
-    {
-      day_of_week: '火',
-      period: 4,
+      period: 2,
       room: 'M-178(H1101)'
     }
   ]

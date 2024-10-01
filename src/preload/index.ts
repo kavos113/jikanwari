@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { SearchQuery } from '../types/search.js'
+import { UserTimetable } from '../types/user.js'
 
 // Custom APIs for renderer
 const api = {
@@ -8,7 +9,11 @@ const api = {
   scrapeTest: () => ipcRenderer.invoke('scrapeTest'),
   pingCustom: () => ipcRenderer.invoke('pingCustom'),
   search: (query: SearchQuery) => ipcRenderer.invoke('search', query),
-  getCourse: (id: number) => ipcRenderer.invoke('getCourse', id)
+  getCourse: (id: number) => ipcRenderer.invoke('getCourse', id),
+  postUserTimetable: (userTimetables: UserTimetable[]) =>
+    ipcRenderer.invoke('postUserTimetable', userTimetables),
+  getUserTimetable: (year: number, quarter: number) =>
+    ipcRenderer.invoke('getUserTimetable', year, quarter)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

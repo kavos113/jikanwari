@@ -6,6 +6,7 @@ import { pingCustom } from '../scraper/pingCustom'
 import { scrape, scrape_test } from '../scraper/scraper.js'
 import { createDatabase } from '../database/create.js'
 import { getCourse, searchCourses } from '../database/courses.js'
+import { getUserTimetable, postUserTimetable } from '../database/user.js'
 
 function createWindow(): void {
   // Create the browser window.
@@ -66,6 +67,12 @@ app.whenReady().then(() => {
   })
   ipcMain.handle('getCourse', async (_, id) => {
     return await getCourse(id)
+  })
+  ipcMain.handle('postUserTimetable', async (_, userTimetables) => {
+    return await postUserTimetable(userTimetables)
+  })
+  ipcMain.handle('getUserTimetable', async (_, year, quarter) => {
+    return await getUserTimetable(year, quarter)
   })
 
   createWindow()

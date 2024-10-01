@@ -1,8 +1,20 @@
 <script setup lang="ts">
 import SimpleButton from '@renderer/components/common/SimpleButton.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+
+const emits = defineEmits<{
+  (event: 'getTimetable'): void
+}>()
+
+const yearModel = defineModel<number>('yearModel')
+const quarterNumberModel = defineModel<number>('quarterNumberModel')
+const isEditModel = defineModel<boolean>('isEditModel', {
+  default: false
+})
 
 const isNowFetching = ref<boolean>(false)
+const year = ref<number>(0)
+const quarter = ref<number>(0)
 
 const fetchTest = () => {
   isNowFetching.value = true
@@ -10,17 +22,36 @@ const fetchTest = () => {
     isNowFetching.value = false
   })
 }
+
+const clickEdit = () => {
+  isEditModel.value = !isEditModel.value
+}
+
+watch(year, (newVal) => {
+  yearModel.value = parseInt(newVal.toString())
+  if (!isEditModel.value) {
+    emits('getTimetable')
+  }
+})
+
+watch(quarter, (newVal) => {
+  quarterNumberModel.value = parseInt(newVal.toString())
+  if (!isEditModel.value) {
+    emits('getTimetable')
+  }
+})
 </script>
 
 <template>
   <div class="wrapper">
     <SimpleButton>Fetch</SimpleButton>
     <SimpleButton :class="{ disabled: isNowFetching }" @click="fetchTest">Fetch(Test)</SimpleButton>
-    <SimpleButton>Edit</SimpleButton>
-    <input type="text" class="input" />
+    <SimpleButton @click="clickEdit">Edit</SimpleButton>
+    <input v-model.lazy="year" type="text" class="input" />
     <p>年</p>
-    <input type="text" class="input" />
+    <input v-model.lazy="quarter" type="text" class="input" />
     <p>Ｑ</p>
+    <p v-if="isEditModel">編集モード</p>
   </div>
 </template>
 

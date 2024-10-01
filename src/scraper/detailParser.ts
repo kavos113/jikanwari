@@ -64,6 +64,10 @@ const getTimetable = (dl): Timetable[] => {
       period = info.slice(1)
     } else {
       room = info.slice(firstBracket + 1, -1)
+      const secondBracket = room.indexOf('(')
+      if (secondBracket !== -1) {
+        room = room.slice(0, secondBracket)
+      }
       period = info.slice(1, firstBracket)
     }
 

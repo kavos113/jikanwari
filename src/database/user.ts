@@ -64,30 +64,72 @@ export const getUserTimetable = async (year: number, quarter: number): Promise<U
           }
         })
 
-        // get room from timetable
-        userTimetables.forEach((userTimetable) => {
-          db.get(
-            `
-              SELECT room
-              FROM timetable
-              WHERE course_id = ?
-                AND day_of_week = ?
-                AND period = ?
-            `,
-            userTimetable.course_id,
-            userTimetable.day_of_week,
-            userTimetable.period,
-            (err, room) => {
-              if (err) {
-                reject(err)
-              }
+        new Promise((resolve, reject) => {
+          db.serialize(() => {
+            if (userTimetables.length === 0) resolve()
+            for (let i = 0; i < userTimetables.length; i++) {
+              const userTimetable = userTimetables[i]
+              db.get(
+                `
+                  SELECT room
+                  FROM timetable
+                  WHERE course_id = ?
+                    AND day_of_week = ?
+                    AND period = ?
+                `,
+                userTimetable.course_id,
+                userTimetable.day_of_week,
+                userTimetable.period,
+                (err, room) => {
+                  if (err) {
+                    reject(err)
+                  }
 
-              userTimetable.room = room
+                  userTimetable.room = room.room
+                }
+              )
+              db.get(
+                `
+                  SELECT course_title
+                  FROM courses
+                  WHERE id = ?
+                `,
+                userTimetable.course_id,
+                (err, course_title) => {
+                  if (err) {
+                    reject(err)
+                  }
+
+                  userTimetable.course_title = course_title.course_title
+                }
+              )
+              db.get(
+                `
+                  SELECT name
+                  FROM lecturers
+                  WHERE course_id = ?
+                  LIMIT 1
+                `,
+                userTimetable.course_id,
+                (err, lecturer) => {
+                  if (err) {
+                    reject(err)
+                  }
+
+                  userTimetable.lecturer = lecturer.name
+
+                  if (i === userTimetables.length - 1) resolve()
+                }
+              )
             }
-          )
+          })
         })
-
-        resolve(userTimetables)
+          .then(() => {
+            resolve(userTimetables)
+          })
+          .catch((err) => {
+            reject(err)
+          })
       }
     )
   })

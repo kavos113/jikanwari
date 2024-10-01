@@ -32,10 +32,11 @@ const data = ref<CourseListItem[]>([
   }
 ])
 
-const isEditTimetableModel = defineModel({
-  key: 'isEditTimetableModel',
-  default: false
-})
+const isEditTimetableModel = defineModel<boolean>('isEditTimetable')
+
+const emits = defineEmits<{
+  (event: 'postTimetable', course: CourseListItem): void
+}>()
 
 const isShowCourseDetail = ref<boolean>(false)
 const isShowCourseDetailOverlay = ref<boolean>(false)
@@ -70,6 +71,12 @@ const closeDetail = async () => {
   isShowCourseDetailOverlay.value = false
 }
 
+const postTimetable = async (course: CourseListItem) => {
+  if (isEditTimetableModel.value) {
+    emits('postTimetable', course)
+  }
+}
+
 const search = async (query: SearchQuery) => {
   await window.api.pingCustom()
   console.log(JSON.parse(JSON.stringify(query)))
@@ -83,7 +90,7 @@ const search = async (query: SearchQuery) => {
   <div>
     <h1>Course List</h1>
     <CourseListHeader @change-query="search" />
-    <CourseListTable :data="data" @get-course-detail="openDetail" />
+    <CourseListTable :data="data" @get-course-detail="openDetail" @post-timetable="postTimetable" />
   </div>
   <CourseDetailView
     :data="detailData"

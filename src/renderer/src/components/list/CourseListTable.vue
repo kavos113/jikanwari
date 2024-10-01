@@ -10,6 +10,7 @@ const props = defineProps<{
 
 const emits = defineEmits<{
   (event: 'getCourseDetail', id: int): void
+  (event: 'postTimetable', item: CourseListItem): void
 }>()
 
 const isDetail = ref<boolean>(false)
@@ -24,8 +25,9 @@ props.data.forEach((item) => {
   timetable.value.push(text)
 })
 
-const openDetail = () => {
+const openDetail = (i: number) => {
   emits('getCourseDetail', 1)
+  emits('postTimetable', props.data[i])
 }
 
 const sample: CourseDetail = {
@@ -77,10 +79,10 @@ const sample: CourseDetail = {
       </thead>
       <tbody>
         <tr v-for="(item, i) in props.data" :key="item.code">
-          <td class="openDetail" @click="openDetail">
+          <td class="openDetail" @click="openDetail(i)">
             <p>{{ item.code }}</p>
           </td>
-          <td class="openDetail" @click="openDetail">
+          <td class="openDetail" @click="openDetail(i)">
             <p>{{ item.title }}</p>
           </td>
           <td>

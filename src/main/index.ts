@@ -5,7 +5,7 @@ import icon from '../../resources/icon.png?asset'
 import { pingCustom } from '../scraper/pingCustom'
 import { scrape, scrape_test } from '../scraper/scraper.js'
 import { createDatabase } from '../database/create.js'
-import { searchCourses } from '../database/courses.js'
+import { getCourse, searchCourses } from '../database/courses.js'
 
 function createWindow(): void {
   // Create the browser window.
@@ -63,6 +63,9 @@ app.whenReady().then(() => {
   ipcMain.handle('scrapeTest', scrape_test)
   ipcMain.handle('search', async (_, query) => {
     return await searchCourses(query)
+  })
+  ipcMain.handle('getCourse', async (_, id) => {
+    return await getCourse(id)
   })
 
   createWindow()

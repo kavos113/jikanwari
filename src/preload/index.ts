@@ -7,7 +7,8 @@ const api = {
   scrape: () => ipcRenderer.invoke('scrape'),
   scrapeTest: () => ipcRenderer.invoke('scrapeTest'),
   pingCustom: () => ipcRenderer.invoke('pingCustom'),
-  search: (query: SearchQuery) => ipcRenderer.invoke('search', query)
+  search: (query: SearchQuery) => ipcRenderer.invoke('search', query),
+  getCourse: (id: number) => ipcRenderer.invoke('getCourse', id)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

@@ -47,7 +47,7 @@ export const createDatabase = () => {
       year INTEGER NOT NULL,
       quarter INTEGER NOT NULL,
       day_of_week TEXT NOT NULL,
-      period INTEGER NOT NULL,
+      period INTEGER NOT NULL, -- 1-5
       FOREIGN KEY (course_id) REFERENCES courses(id)
     )
     `)

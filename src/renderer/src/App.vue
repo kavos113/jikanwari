@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import CourseList from '@renderer/components/list/CourseList.vue'
 import Timetable from '@renderer/components/timetable/Timetable.vue'
+import { ref } from 'vue'
+
+const isEditTimetable = ref<boolean>(false)
 </script>
 
 <template>
   <div class="wrapper">
     <CourseList />
-    <Timetable />
+    <Timetable v-model="isEditTimetable" />
   </div>
 </template>
 

@@ -330,3 +330,58 @@ export const searchCourses = async (query: SearchQuery): Promise<CourseListItem[
     })
   })
 }
+
+export const getCourse = async (id: number): Promise<CourseDetail> => {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.get('SELECT * FROM courses WHERE id = ?', id, (err, row) => {
+        if (err) {
+          console.error(err)
+          reject('error')
+        } else {
+          const course: CourseDetail = {
+            id: row.id,
+            code: row.code,
+            title: row.course_title,
+            english_title: row.english_title,
+            department: row.opening_department,
+            start: row.start,
+            sylbs_update: row.sylbs_update,
+            lecture_type: row.lecture_type,
+            language: row.language,
+            detailsHTML: row.details,
+            credits: row.credits
+          }
+
+          const lecturerQuery = `
+            SELECT name, url
+            FROM lecturers
+            WHERE course_id = ?
+          `
+          const timetableQuery = `
+            SELECT day_of_week, period, room
+            FROM timetable
+            WHERE course_id = ?
+          `
+          db.all(lecturerQuery, row.id, (err, lecturers) => {
+            if (err) {
+              console.error(err)
+              reject('error')
+            } else {
+              course.lecturer = lecturers
+              db.all(timetableQuery, row.id, (err, timetables) => {
+                if (err) {
+                  console.error(err)
+                  reject('error')
+                } else {
+                  course.timetable = timetables
+                  resolve(course)
+                }
+              })
+            }
+          })
+        }
+      })
+    })
+  })
+}

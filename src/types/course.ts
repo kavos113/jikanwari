@@ -18,6 +18,7 @@ export interface Lecturer {
 }
 
 export interface CourseDetail {
+  id: number
   code: string
   title: string
   english_title: string

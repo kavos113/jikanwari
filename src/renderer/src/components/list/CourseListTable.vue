@@ -2,15 +2,16 @@
 import { CourseListItem, CourseDetail } from '../../../../types/course.js'
 import { ref } from 'vue'
 import CourseListCard from '@renderer/components/list/CourseListCard.vue'
-import CourseDetailView from '@renderer/components/list/CourseDetailView.vue'
 
 const props = defineProps<{
   data: CourseListItem[]
 }>()
 
+const emits = defineEmits<{
+  (event: 'getCourseDetail', id: int): void
+}>()
+
 const isDetail = ref<boolean>(false)
-const isShowCourseDetail = ref<boolean>(false)
-const isShowCourseDetailOverlay = ref<boolean>(false)
 
 const timetable = ref<string[]>([])
 props.data.forEach((item) => {
@@ -23,14 +24,7 @@ props.data.forEach((item) => {
 })
 
 const openDetail = () => {
-  isShowCourseDetail.value = true
-  isShowCourseDetailOverlay.value = true
-}
-
-const closeDetail = async () => {
-  isShowCourseDetail.value = false
-  await new Promise((resolve) => setTimeout(resolve, 250))
-  isShowCourseDetailOverlay.value = false
+  emits('getCourseDetail', 1)
 }
 
 const sample: CourseDetail = {
@@ -104,12 +98,6 @@ const sample: CourseDetail = {
       </tbody>
     </table>
   </div>
-  <CourseDetailView :data="sample" class="detail" :class="{ detailActive: isShowCourseDetail }" />
-  <div
-    class="overlay"
-    :class="{ overlayActive: isShowCourseDetail, overlayZIndex: isShowCourseDetailOverlay }"
-    @click="closeDetail"
-  ></div>
 </template>
 
 <style scoped>
@@ -131,53 +119,11 @@ const sample: CourseDetail = {
   padding: 2px 8px;
 }
 
-.detail {
-  position: fixed;
-  top: 0;
-  right: 0;
-  background-color: white;
-  width: 60%;
-  height: 100%;
-  overflow-y: scroll;
-  z-index: 2;
-  transform: translateX(110%);
-  transition-property: transform;
-  transition-duration: 0.25s;
-  box-shadow: -5px 0 5px rgba(0, 0, 0, 0.3);
-}
-
-.detailActive {
-  z-index: 2;
-  transform: translateX(0);
-}
-
 .openDetail {
   cursor: pointer;
 }
 
 .openDetail p:hover {
   color: #42d392;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: -1;
-  opacity: 0;
-  transition-property: opacity;
-  transition-duration: 0.25s;
-}
-
-.overlayActive {
-  z-index: 1;
-  opacity: 1;
-}
-
-.overlayZIndex {
-  z-index: 1;
 }
 </style>

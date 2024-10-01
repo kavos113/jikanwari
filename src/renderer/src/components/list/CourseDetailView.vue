@@ -10,7 +10,7 @@ const props = defineProps<{
   <div>
     <div class="wrapper">
       <div class="title">
-        <p class="jaTitle">{{ props.data.title.slice(7) }}</p>
+        <p class="jaTitle">{{ props.data.title }}</p>
         <p class="enTitle">{{ props.data.english_title }}</p>
       </div>
       <div class="data">
@@ -21,7 +21,9 @@ const props = defineProps<{
         <dl class="dataItem">
           <dt>担当教員</dt>
           <dd>
-            <a :href="props.data.lecturer[0].url">{{ props.data.lecturer[0].name }}</a>
+            <a v-for="lecturer in props.data.lecturer" :key="lecturer.name" :href="lecturer.url">
+              {{ lecturer.name }}
+            </a>
           </dd>
         </dl>
         <dl class="dataItem">

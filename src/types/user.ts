@@ -20,4 +20,5 @@ export interface TimetableItem {
   title: string
   lecturer: string
   room: string
+  course_id: number
 }

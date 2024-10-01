@@ -84,6 +84,10 @@ const search = async (query: SearchQuery) => {
   console.log(res)
   data.value = res
 }
+
+defineExpose({
+  openDetail
+})
 </script>
 
 <template>

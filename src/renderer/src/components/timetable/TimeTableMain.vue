@@ -13,7 +13,8 @@ const initItems = () => {
         isDefined: false,
         title: '',
         lecturer: '',
-        room: ''
+        room: '',
+        course_id: 0
       }
     })
   })
@@ -23,41 +24,47 @@ const props = defineProps<{
   data: UserTimetable[]
 }>()
 
+const emits = defineEmits<{
+  (event: 'openDetail', id: number): void
+}>()
+
+const isEditModel = defineModel<boolean>('isEditModel')
+
 const items = ref<Record<string, Record<number, TimetableItem>>>({
   月: {
-    1: { isDefined: false, title: '', lecturer: '', room: '' },
-    2: { isDefined: false, title: '', lecturer: '', room: '' },
-    3: { isDefined: false, title: '', lecturer: '', room: '' },
-    4: { isDefined: false, title: '', lecturer: '', room: '' },
-    5: { isDefined: false, title: '', lecturer: '', room: '' }
+    1: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    2: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    3: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    4: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    5: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 }
   },
   火: {
-    1: { isDefined: false, title: '', lecturer: '', room: '' },
-    2: { isDefined: false, title: '', lecturer: '', room: '' },
-    3: { isDefined: false, title: '', lecturer: '', room: '' },
-    4: { isDefined: false, title: '', lecturer: '', room: '' },
-    5: { isDefined: false, title: '', lecturer: '', room: '' }
+    1: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    2: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    3: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    4: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    5: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 }
   },
   水: {
-    1: { isDefined: false, title: '', lecturer: '', room: '' },
-    2: { isDefined: false, title: '', lecturer: '', room: '' },
-    3: { isDefined: false, title: '', lecturer: '', room: '' },
-    4: { isDefined: false, title: '', lecturer: '', room: '' },
-    5: { isDefined: false, title: '', lecturer: '', room: '' }
+    1: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    2: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    3: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    4: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    5: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 }
   },
   木: {
-    1: { isDefined: false, title: '', lecturer: '', room: '' },
-    2: { isDefined: false, title: '', lecturer: '', room: '' },
-    3: { isDefined: false, title: '', lecturer: '', room: '' },
-    4: { isDefined: false, title: '', lecturer: '', room: '' },
-    5: { isDefined: false, title: '', lecturer: '', room: '' }
+    1: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    2: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    3: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    4: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    5: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 }
   },
   金: {
-    1: { isDefined: false, title: '', lecturer: '', room: '' },
-    2: { isDefined: false, title: '', lecturer: '', room: '' },
-    3: { isDefined: false, title: '', lecturer: '', room: '' },
-    4: { isDefined: false, title: '', lecturer: '', room: '' },
-    5: { isDefined: false, title: '', lecturer: '', room: '' }
+    1: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    2: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    3: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    4: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 },
+    5: { isDefined: false, title: '', lecturer: '', room: '', course_id: 0 }
   }
 })
 
@@ -68,7 +75,8 @@ watch(props, () => {
       isDefined: true,
       title: item.course_title,
       lecturer: item.lecturer,
-      room: item.room
+      room: item.room,
+      course_id: item.course_id
     }
   })
 })
@@ -99,7 +107,15 @@ watch(props, () => {
         </td>
         <td v-for="day in days" :key="day">
           <div class="item">
-            <TimeTableItem :data="items[day][periodAdapter(period)]" :is-period="false" />
+            <TimeTableItem
+              :data="items[day][periodAdapter(period)]"
+              :is-period="false"
+              :class="{
+                clickable: items[day][periodAdapter(period)].isDefined && !isEditModel,
+                clickableEdit: items[day][periodAdapter(period)].isDefined && isEditModel
+              }"
+              @click="emits('openDetail', items[day][periodAdapter(period)].course_id)"
+            />
           </div>
         </td>
       </tr>
@@ -129,5 +145,25 @@ watch(props, () => {
 .item {
   width: 100%;
   height: 100%;
+}
+
+.clickable {
+  cursor: pointer;
+  transition-property: box-shadow;
+  transition-duration: 0.1s;
+}
+
+.clickable:hover {
+  box-shadow: 0 0 10px #42d392;
+}
+
+.clickableEdit {
+  cursor: pointer;
+  transition-property: box-shadow;
+  transition-duration: 0.1s;
+}
+
+.clickableEdit:hover {
+  box-shadow: 0 0 10px #eea2a2;
 }
 </style>

@@ -13,7 +13,9 @@ const api = {
   postUserTimetable: (userTimetables: UserTimetable[]) =>
     ipcRenderer.invoke('postUserTimetable', userTimetables),
   getUserTimetable: (year: number, quarter: number) =>
-    ipcRenderer.invoke('getUserTimetable', year, quarter)
+    ipcRenderer.invoke('getUserTimetable', year, quarter),
+  deleteUserTimetable: (year: number, quarter: number, course_id: number) =>
+    ipcRenderer.invoke('deleteUserTimetable', year, quarter, course_id)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

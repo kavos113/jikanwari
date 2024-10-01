@@ -8,12 +8,24 @@ const isEditModel = defineModel<boolean>('isEditModel')
 
 const quarterModel = defineModel<Quarter>('quarterModel')
 
+const emits = defineEmits<{
+  (event: 'openDetail', id: number): void
+}>()
+
 const timetable = ref<UserTimetable[]>([])
 
 const getTimetable = async () => {
   const res = await window.api.getUserTimetable(quarterModel.value.year, quarterModel.value.quarter)
   timetable.value = res
 }
+
+const openDetail = (id: number) => {
+  emits('openDetail', id)
+}
+
+defineExpose({
+  getTimetable
+})
 </script>
 
 <template>
@@ -24,7 +36,11 @@ const getTimetable = async () => {
       v-model:is-edit-model="isEditModel"
       @get-timetable="getTimetable"
     />
-    <TimeTableMain :data="timetable" />
+    <TimeTableMain
+      v-model:is-edit-model="isEditModel"
+      :data="timetable"
+      @open-detail="openDetail"
+    />
   </div>
 </template>
 

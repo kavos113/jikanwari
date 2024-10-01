@@ -18,7 +18,7 @@ const insertUserTimetable = async (userTimetable: UserTimetable): Promise<void> 
   })
 }
 
-const deleteUserTimetable = async (year: number, quarter: number): Promise<void> => {
+const deleteUserTimetableAll = async (year: number, quarter: number): Promise<void> => {
   return new Promise((resolve, reject) => {
     db.run(
       `
@@ -33,7 +33,7 @@ const deleteUserTimetable = async (year: number, quarter: number): Promise<void>
 }
 
 export const postUserTimetable = async (userTimetables: UserTimetable[]): Promise<void> => {
-  await deleteUserTimetable(userTimetables[0].year, userTimetables[0].quarter)
+  await deleteUserTimetableAll(userTimetables[0].year, userTimetables[0].quarter)
   for (const userTimetable of userTimetables) {
     await insertUserTimetable(userTimetable)
   }
@@ -130,6 +130,31 @@ export const getUserTimetable = async (year: number, quarter: number): Promise<U
           .catch((err) => {
             reject(err)
           })
+      }
+    )
+  })
+}
+
+export const deleteUserTimetable = async (
+  year: number,
+  quarter: number,
+  course_id: number
+): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    db.run(
+      `
+    DELETE FROM user_timetables
+    WHERE year = ? AND quarter = ? AND course_id = ?
+  `,
+      year,
+      quarter,
+      course_id,
+      (err) => {
+        if (err) {
+          reject(err)
+        }
+
+        resolve()
       }
     )
   })

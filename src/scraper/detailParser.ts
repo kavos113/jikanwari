@@ -73,8 +73,8 @@ const getTimetable = (dl): Timetable[] => {
 
     const [start, end] = period.split('-')
     // 1-2 -> 1, 1, 5-8 -> 3, 4 など
-    const startI = (parseInt(start) + 1) / 2
-    const endI = (parseInt(end) + 1) / 2
+    const startI = Math.ceil(parseInt(start) / 2)
+    const endI = Math.ceil(parseInt(end) / 2)
 
     for (let i = startI; i <= endI; i++) {
       timetable.push({

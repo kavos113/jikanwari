@@ -15,6 +15,9 @@ const isEditModel = defineModel<boolean>('isEditModel', {
 const isNowFetching = ref<boolean>(false)
 const year = ref<number>(0)
 const quarter = ref<number>(0)
+const fetchStatus = ref<string>('')
+const fetchedCount = ref<number>(0)
+const fetchCountAll = ref<number>(0)
 
 const fetchTest = () => {
   isNowFetching.value = true
@@ -23,9 +26,28 @@ const fetchTest = () => {
   })
 }
 
+const fetch = () => {
+  isNowFetching.value = true
+  window.api.scrape().then(() => {
+    isNowFetching.value = false
+  })
+}
+
 const clickEdit = () => {
   isEditModel.value = !isEditModel.value
 }
+
+window.api.onChangeScrapingStatus((status) => {
+  fetchStatus.value = status
+})
+
+window.api.onChangeScrapingCount((count) => {
+  fetchCountAll.value = count
+})
+
+window.api.onChangeScrapingCountFinish((count) => {
+  fetchedCount.value = count
+})
 
 watch(year, (newVal) => {
   yearModel.value = parseInt(newVal.toString())
@@ -43,15 +65,23 @@ watch(quarter, (newVal) => {
 </script>
 
 <template>
-  <div class="wrapper">
-    <SimpleButton>Fetch</SimpleButton>
-    <SimpleButton :class="{ disabled: isNowFetching }" @click="fetchTest">Fetch(Test)</SimpleButton>
-    <SimpleButton @click="clickEdit">Edit</SimpleButton>
-    <input v-model.lazy="year" type="text" class="input" />
-    <p>年</p>
-    <input v-model.lazy="quarter" type="text" class="input" />
-    <p>Ｑ</p>
-    <p v-if="isEditModel">編集モード</p>
+  <div>
+    <div class="wrapper">
+      <SimpleButton :class="{ disabled: isNowFetching }" @click="fetch">Fetch</SimpleButton>
+      <SimpleButton :class="{ disabled: isNowFetching }" @click="fetchTest"
+        >Fetch(Test)</SimpleButton
+      >
+      <SimpleButton @click="clickEdit">Edit</SimpleButton>
+      <input v-model.lazy="year" type="text" class="input" />
+      <p>年</p>
+      <input v-model.lazy="quarter" type="text" class="input" />
+      <p>Ｑ</p>
+      <p v-if="isEditModel">編集モード</p>
+    </div>
+    <div v-if="isNowFetching">
+      <p>進行状況: {{ fetchStatus }}</p>
+      <p>取得完了: {{ fetchedCount }} / {{ fetchCountAll }}</p>
+    </div>
   </div>
 </template>
 
@@ -72,6 +102,7 @@ watch(quarter, (newVal) => {
 .disabled {
   color: #ccc;
   cursor: not-allowed;
+  pointer-events: none;
 }
 
 .disabled:hover {

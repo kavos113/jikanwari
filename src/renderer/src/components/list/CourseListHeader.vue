@@ -407,7 +407,7 @@ tr:has(.periodHeader:hover) {
 }
 
 .menu {
-  width: 70%;
+  width: 50%;
   position: absolute;
   top: 100%;
 }

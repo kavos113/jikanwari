@@ -44,7 +44,6 @@ export const insertCourse = async (course: CourseDetail, url: string) => {
           console.error(err)
           reject('error')
         } else {
-          console.log(rows)
           await insertLecturers(rows[0].id, course)
           await insertTimetable(rows[0].id, course)
         }
@@ -192,23 +191,40 @@ const updateTimetable = async (courseId: number, course: CourseDetail) => {
   })
 }
 
-export const needAction = async (code: string, sylbs_update: string): Promise<string> => {
+// TODO: codeだけだと A, B, Cの区別ついてない
+export const needAction = async (
+  code: string,
+  sylbs_update: string,
+  title: string,
+  start: string
+): Promise<string> => {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
-      db.get('SELECT sylbs_update FROM courses WHERE code = ?', code, (err, row) => {
-        if (err) {
-          console.error(err)
-          reject('error')
-        } else {
-          if (row === undefined) {
-            resolve('insert')
-          } else if (row.sylbs_update !== sylbs_update) {
-            resolve('update')
+      db.get(
+        `SELECT sylbs_update FROM courses WHERE code = ? AND course_title = ? AND start = ? `,
+        code,
+        title,
+        start,
+        (err, row) => {
+          if (err) {
+            console.error(err)
+            reject('error')
           } else {
-            resolve('skip')
+            if (row === undefined) {
+              resolve('insert')
+            } else {
+              const get_update = row.sylbs_update.replace(/[年月]/g, '/').replace('日', '')
+              // console.log(get_update)
+              // console.log(sylbs_update)
+              if (get_update !== sylbs_update) {
+                resolve('update')
+              } else {
+                resolve('skip')
+              }
+            }
           }
         }
-      })
+      )
     })
   })
 }

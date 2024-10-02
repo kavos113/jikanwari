@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CourseListItem, CourseDetail } from '../../../../types/course.js'
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import CourseListCard from '@renderer/components/list/CourseListCard.vue'
 import { periodStringAdapter } from '../../../../util/adapter.js'
 
@@ -16,17 +16,9 @@ const emits = defineEmits<{
 const isDetail = ref<boolean>(false)
 
 const timetable = ref<string[]>([])
-props.data.forEach((item) => {
-  const text = item.timetable
-    .map((item) => {
-      return `${item.day_of_week}${periodStringAdapter(item.period)}`
-    })
-    .join(' ')
-  timetable.value.push(text)
-})
 
 const openDetail = (i: number) => {
-  emits('getCourseDetail', 1)
+  emits('getCourseDetail', i)
   emits('postTimetable', props.data[i])
 }
 
@@ -56,6 +48,19 @@ const sample: CourseDetail = {
     }
   ]
 }
+
+watch(props, () => {
+  timetable.value = []
+  props.data.forEach((item) => {
+    const text = item.timetable
+      .map((item) => {
+        return `${item.day_of_week}${periodStringAdapter(item.period)}`
+      })
+      .join(' ')
+    timetable.value.push(text)
+    item.code = item.code.slice(0, 9)
+  })
+})
 </script>
 
 <template>
@@ -64,7 +69,7 @@ const sample: CourseDetail = {
   <div v-if="isDetail">
     <CourseListCard v-for="item in data" :key="item.code" :course="item" />
   </div>
-  <div v-else>
+  <div v-else class="tableWrapper">
     <table class="table">
       <thead>
         <tr>
@@ -78,20 +83,20 @@ const sample: CourseDetail = {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, i) in props.data" :key="item.code">
-          <td class="openDetail" @click="openDetail(i)">
+        <tr v-for="(item, i) in props.data" :key="item.id">
+          <td class="openDetail code" @click="openDetail(item.id)">
             <p>{{ item.code }}</p>
           </td>
-          <td class="openDetail" @click="openDetail(i)">
+          <td class="openDetail" @click="openDetail(item.id)">
             <p>{{ item.title }}</p>
           </td>
-          <td>
-            <a :href="item.lecturer[0].url">{{ item.lecturer[0].name }}</a>
+          <td class="lecturer">
+            <a :href="item.lecturer[0]?.url">{{ item.lecturer[0]?.name }}</a>
           </td>
-          <td>{{ timetable[i] }}</td>
-          <td>{{ item.start }}</td>
-          <td>{{ item.department }}</td>
-          <td>{{ item.credits }}</td>
+          <td class="timetable">{{ timetable[i] }}</td>
+          <td class="start">{{ item.start }}</td>
+          <td class="department">{{ item.department }}</td>
+          <td class="credits">{{ item.credits }}</td>
         </tr>
       </tbody>
     </table>
@@ -99,9 +104,18 @@ const sample: CourseDetail = {
 </template>
 
 <style scoped>
+.tableWrapper {
+  width: 100%;
+  height: 82%;
+  overflow-y: auto;
+  table-layout: fixed;
+}
+
 .table {
   width: 100%;
+  max-height: 100%;
   border-collapse: collapse;
+  overflow-y: auto;
 }
 
 .table th,
@@ -123,5 +137,31 @@ const sample: CourseDetail = {
 
 .openDetail p:hover {
   color: #42d392;
+}
+
+.code p {
+  width: 70px;
+  word-break: keep-all;
+  overflow: hidden;
+}
+
+.start {
+  width: 90px;
+}
+
+.department {
+  width: 170px;
+}
+
+.credits {
+  width: 60px;
+}
+
+.lecturer {
+  width: 90px;
+}
+
+.timetable {
+  width: 90px;
 }
 </style>

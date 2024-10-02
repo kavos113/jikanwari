@@ -15,7 +15,13 @@ const api = {
   getUserTimetable: (year: number, quarter: number) =>
     ipcRenderer.invoke('getUserTimetable', year, quarter),
   deleteUserTimetable: (year: number, quarter: number, course_id: number) =>
-    ipcRenderer.invoke('deleteUserTimetable', year, quarter, course_id)
+    ipcRenderer.invoke('deleteUserTimetable', year, quarter, course_id),
+  onChangeScrapingStatus: (callback) =>
+    ipcRenderer.on('scraping-status', (_event, value) => callback(value)),
+  onChangeScrapingCount: (callback) =>
+    ipcRenderer.on('scraping-count', (_event, value) => callback(value)),
+  onChangeScrapingCountFinish: (callback) =>
+    ipcRenderer.on('scraping-count-finish', (_event, value) => callback(value))
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

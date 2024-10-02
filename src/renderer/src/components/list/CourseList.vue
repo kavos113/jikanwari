@@ -59,6 +59,7 @@ const detailData = ref<CourseDetail>({
 
 const openDetail = async (id: number) => {
   if (isEditTimetableModel.value) return
+  console.log(id)
   detailData.value = await window.api.getCourse(id)
   console.log(detailData.value)
   isShowCourseDetail.value = true
@@ -82,6 +83,7 @@ const search = async (query: SearchQuery) => {
   console.log(JSON.parse(JSON.stringify(query)))
   const res = await window.api.search(JSON.parse(JSON.stringify(query)))
   console.log(res)
+
   data.value = res
 }
 
@@ -91,7 +93,7 @@ defineExpose({
 </script>
 
 <template>
-  <div>
+  <div class="wrapper">
     <h1>Course List</h1>
     <CourseListHeader @change-query="search" />
     <CourseListTable :data="data" @get-course-detail="openDetail" @post-timetable="postTimetable" />
@@ -109,6 +111,12 @@ defineExpose({
 </template>
 
 <style scoped>
+.wrapper {
+  height: 100%;
+  overflow-x: visible;
+  overflow-y: auto;
+}
+
 .detail {
   position: fixed;
   top: 0;

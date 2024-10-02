@@ -6,31 +6,7 @@ import { ref } from 'vue'
 import { SearchQuery } from '../../../../types/search.js'
 import CourseDetailView from '@renderer/components/list/CourseDetailView.vue'
 
-const data = ref<CourseListItem[]>([
-  {
-    code: 'PHY.S209',
-    title: '熱力学（物理）(講義）',
-    english_title: 'Thermodynamics (Physics) (Lecture)',
-    lecturer: [
-      {
-        name: '笹本 智弘',
-        url: 'https://www.ocw.titech.ac.jp/index.php?module=General&action=StaffInfo&id=489'
-      }
-    ],
-    department: '物理学系',
-    start: '2024年度 3Q',
-    lecture_type: '講義 (対面型)',
-    language: '日本語',
-    credits: 1,
-    timetable: [
-      {
-        day_of_week: '火',
-        period: 2,
-        room: 'M-178(H1101)'
-      }
-    ]
-  }
-])
+const data = ref<CourseListItem[]>([])
 
 const isEditTimetableModel = defineModel<boolean>('isEditTimetable')
 

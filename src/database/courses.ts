@@ -1,4 +1,4 @@
-import { CourseDetail, CourseListItem, Timetable } from '../types/course.js'
+import { CourseDetail, CourseListItem } from '../types/course.js'
 import { db } from './create.js'
 import { SearchQuery } from '../types/search.js'
 import { periodAdapter } from '../util/adapter.js'

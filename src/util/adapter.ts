@@ -11,6 +11,8 @@ export const periodAdapter = (periodString: string): number => {
       return 4
     case '9-10':
       return 5
+    case '11-12':
+      return 6
     default:
       throw new Error(`Invalid period string: ${periodString}`)
   }
@@ -28,6 +30,8 @@ export const periodStringAdapter = (period: number): string => {
       return '7-8'
     case 5:
       return '9-10'
+    case 6:
+      return '11-12'
     default:
       throw new Error(`Invalid period number: ${period}`)
   }

@@ -5,7 +5,6 @@ import { BrowserWindow } from 'electron'
 
 const mainUrls = [
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=6&lang=JA', // 環社
-  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=7&lang=JA', // 教養
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=10&lang=JA', // 初年専門
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=11&lang=JA' // 共通
 ]
@@ -15,7 +14,8 @@ const url2 = [
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=4&lang=JA', // 情報
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=2&lang=JA', //工学院
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=3&lang=JA', // 物質
-  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=5&lang=JA' // 生命
+  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=5&lang=JA', // 生命
+  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=7&lang=JA' // 教養
 ]
 
 export const scrape = async () => {
@@ -36,7 +36,12 @@ export const scrape = async () => {
     const start = performance.now()
 
     for (const course of courses) {
-      if (course.code === '') continue
+      if (course.code === '') {
+        scraped++
+        console.log('scraping course: ', course.code, 'skip')
+        mainWindow.webContents.send('scraping-count-finish', scraped)
+        continue
+      }
 
       const status = await needAction(
         course.code,
@@ -44,6 +49,7 @@ export const scrape = async () => {
         course.title.title,
         course.start
       )
+      // const status = await needActionTest(course.code)
 
       if (status === 'skip' || status === 'error') {
         scraped++

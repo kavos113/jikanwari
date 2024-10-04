@@ -5,6 +5,8 @@ import CourseListDepartmentMenu from '@renderer/components/list/CourseListDepart
 
 const emits = defineEmits<{
   (event: 'changeQuery', value: SearchQuery): void
+  (event: 'changeTitleQuery', value: string): void
+  (event: 'changeLecturerQuery', value: string): void
 }>()
 
 const grades = ref<string[]>(['100', '200', '300', '400', '500', '600'])
@@ -58,12 +60,12 @@ watch(departmentQuery, () => {
 
 watch(titleQuery, () => {
   query.value.title = titleQuery.value
-  emits('changeQuery', query.value)
+  emits('changeTitleQuery', query.value.title)
 })
 
 watch(lecturerQuery, () => {
   query.value.lecturer = lecturerQuery.value
-  emits('changeQuery', query.value)
+  emits('changeLecturerQuery', query.value.lecturer)
 })
 
 const clickPeriod = (period: string) => {

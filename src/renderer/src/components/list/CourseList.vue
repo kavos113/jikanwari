@@ -6,7 +6,8 @@ import { ref } from 'vue'
 import { SearchQuery } from '../../../../types/search.js'
 import CourseDetailView from '@renderer/components/list/CourseDetailView.vue'
 
-const data = ref<CourseListItem[]>([])
+const dbData = ref<CourseListItem[]>([])
+let data: CourseListItem[] = []
 
 const isEditTimetableModel = defineModel<boolean>('isEditTimetable')
 
@@ -55,12 +56,21 @@ const postTimetable = async (course: CourseListItem) => {
 }
 
 const search = async (query: SearchQuery) => {
-  await window.api.pingCustom()
   console.log(JSON.parse(JSON.stringify(query)))
   const res = await window.api.search(JSON.parse(JSON.stringify(query)))
-  console.log(res)
 
-  data.value = res
+  data = res
+  dbData.value = res
+}
+
+const searchTitle = (title: string) => {
+  dbData.value = data.filter((item) => item.title.includes(title))
+}
+
+const searchLecturer = (lecturer: string) => {
+  dbData.value = data.filter((item) => {
+    return item.lecturer.some((l) => l.name.includes(lecturer))
+  })
 }
 
 defineExpose({
@@ -71,8 +81,16 @@ defineExpose({
 <template>
   <div class="wrapper">
     <h1>Course List</h1>
-    <CourseListHeader @change-query="search" />
-    <CourseListTable :data="data" @get-course-detail="openDetail" @post-timetable="postTimetable" />
+    <CourseListHeader
+      @change-query="search"
+      @change-title-query="searchTitle"
+      @change-lecturer-query="searchLecturer"
+    />
+    <CourseListTable
+      :data="dbData"
+      @get-course-detail="openDetail"
+      @post-timetable="postTimetable"
+    />
   </div>
   <CourseDetailView
     :data="detailData"

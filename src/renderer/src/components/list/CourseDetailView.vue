@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { CourseDetail } from '../../../../types/course.js'
+import { periodStringAdapter } from '../../../../util/adapter.js'
 
 const props = defineProps<{
   data: CourseDetail
@@ -21,7 +22,12 @@ const props = defineProps<{
         <dl class="dataItem">
           <dt>担当教員</dt>
           <dd>
-            <a v-for="lecturer in props.data.lecturer" :key="lecturer.name" :href="lecturer.url">
+            <a
+              v-for="lecturer in props.data.lecturer"
+              :key="lecturer.name"
+              :href="lecturer.url"
+              class="lecturerText"
+            >
               {{ lecturer.name }}
             </a>
           </dd>
@@ -34,7 +40,9 @@ const props = defineProps<{
           <dt>曜日・時限(講義室)</dt>
           <dd>
             <span v-for="timetable in props.data.timetable" :key="timetable.day_of_week">
-              {{ timetable.day_of_week }}{{ timetable.period }}限({{ timetable.room }})
+              {{ timetable.day_of_week }}{{ periodStringAdapter(timetable.period) }}限({{
+                timetable.room
+              }})
             </span>
           </dd>
         </dl>
@@ -107,5 +115,9 @@ const props = defineProps<{
   display: flex;
   flex-direction: row;
   width: 50%;
+}
+
+.lecturerText {
+  margin-right: 0.5rem;
 }
 </style>

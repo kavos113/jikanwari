@@ -39,15 +39,23 @@ export const insertCourse = async (course: CourseDetail, url: string) => {
         course.detailsHTML
       )
 
-      db.all('SELECT id FROM courses WHERE code = ?', course.code, async (err, rows) => {
-        if (err) {
-          console.error(err)
-          reject('error')
-        } else {
-          await insertLecturers(rows[0].id, course)
-          await insertTimetable(rows[0].id, course)
+      db.all(
+        'SELECT id FROM courses WHERE code = ? AND course_title = ? AND english_title = ? AND start = ? AND url = ?',
+        course.code,
+        course.title,
+        course.english_title,
+        course.start,
+        url,
+        async (err, rows) => {
+          if (err) {
+            console.error(err)
+            reject('error')
+          } else {
+            await insertLecturers(rows[0].id, course)
+            await insertTimetable(rows[0].id, course)
+          }
         }
-      })
+      )
     })
 
     resolve('success')
@@ -130,15 +138,23 @@ export const updateCourse = async (course: CourseDetail, url: string) => {
     )
 
     db.serialize(async () => {
-      db.all('SELECT id FROM courses WHERE code = ?', course.code, async (err, rows) => {
-        if (err) {
-          console.error(err)
-          reject('error')
-        } else {
-          await updateLecturers(rows[0].id, course)
-          await updateTimetable(rows[0].id, course)
+      db.all(
+        'SELECT id FROM courses WHERE code = ? AND course_title = ? AND english_title = ? AND start = ? AND url = ?',
+        course.code,
+        course.title,
+        course.english_title,
+        course.start,
+        url,
+        async (err, rows) => {
+          if (err) {
+            console.error(err)
+            reject('error')
+          } else {
+            await updateLecturers(rows[0].id, course)
+            await updateTimetable(rows[0].id, course)
+          }
         }
-      })
+      )
     })
     resolve('success')
   })
@@ -229,6 +245,29 @@ export const needAction = async (
   })
 }
 
+export const needActionTest = async (code: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.all(`SELECT sylbs_update FROM courses WHERE code = ? `, code, (err, rows) => {
+        if (err) {
+          console.error(err)
+          reject('error')
+        } else {
+          if (rows === undefined) {
+            resolve('insert')
+          } else {
+            if (rows.length > 1) {
+              resolve('update')
+            } else {
+              resolve('skip')
+            }
+          }
+        }
+      })
+    })
+  })
+}
+
 export const searchCourses = async (query: SearchQuery): Promise<CourseListItem[]> => {
   return new Promise((resolve, reject) => {
     let dbQuery = `
@@ -241,7 +280,7 @@ export const searchCourses = async (query: SearchQuery): Promise<CourseListItem[
              credits,
              lecture_type,
              language
-      FROM courses`
+      FROM courses ORDER BY grade`
     const params = []
 
     if (query.grades.length > 0) {

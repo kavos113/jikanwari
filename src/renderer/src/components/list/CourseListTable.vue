@@ -64,6 +64,7 @@ watch(props, () => {
           </td>
           <td class="lecturer">
             <a :href="item.lecturer[0]?.url">{{ item.lecturer[0]?.name }}</a>
+            <span v-if="item.lecturer.length > 1"> ほか</span>
           </td>
           <td class="timetable">{{ timetable[i] }}</td>
           <td class="start">{{ item.start }}</td>

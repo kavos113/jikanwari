@@ -32,6 +32,10 @@ const isOpen = (key) => {
 }
 
 const clickItem = (key) => {
+  if (key === '選択解除') {
+    emits('decideValue', '')
+    return
+  }
   emits('decideValue', key)
 }
 

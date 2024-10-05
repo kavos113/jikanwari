@@ -18,6 +18,8 @@ const emits = defineEmits<{
 const isShowCourseDetail = ref<boolean>(false)
 const isShowCourseDetailOverlay = ref<boolean>(false)
 
+const courseListHeader = ref<InstanceType<typeof CourseListHeader> | null>(null)
+
 const detailData = ref<CourseDetail>({
   id: 0,
   code: '',
@@ -73,6 +75,44 @@ const searchLecturer = (lecturer: string) => {
   })
 }
 
+const setLecturer = (lecturer: string) => {
+  if (courseListHeader.value) {
+    courseListHeader.value.setLecturerQuery(lecturer)
+  }
+}
+
+const sort = (target: string, order: 'asc' | 'desc') => {
+  console.log(target, order)
+  dbData.value = dbData.value.sort((a, b) => {
+    if (target === 'lecturer') {
+      if (a[target][0]?.name < b[target][0]?.name) {
+        return order === 'asc' ? -1 : 1
+      }
+      if (a[target][0]?.name > b[target][0]?.name) {
+        return order === 'asc' ? 1 : -1
+      }
+      return 0
+    }
+    if (a[target] < b[target]) {
+      return order === 'asc' ? -1 : 1
+    }
+    if (a[target] > b[target]) {
+      return order === 'asc' ? 1 : -1
+    }
+    return 0
+  })
+
+  data = data.sort((a, b) => {
+    if (a[target] < b[target]) {
+      return order === 'asc' ? -1 : 1
+    }
+    if (a[target] > b[target]) {
+      return order === 'asc' ? 1 : -1
+    }
+    return 0
+  })
+}
+
 defineExpose({
   openDetail
 })
@@ -82,6 +122,7 @@ defineExpose({
   <div class="wrapper">
     <h1>Course List</h1>
     <CourseListHeader
+      ref="courseListHeader"
       @change-query="search"
       @change-title-query="searchTitle"
       @change-lecturer-query="searchLecturer"
@@ -90,6 +131,8 @@ defineExpose({
       :data="dbData"
       @get-course-detail="openDetail"
       @post-timetable="postTimetable"
+      @set-lecturer="setLecturer"
+      @sort="sort"
     />
   </div>
   <CourseDetailView
@@ -106,7 +149,6 @@ defineExpose({
 
 <style scoped>
 .wrapper {
-  height: 100%;
   overflow-x: visible;
   overflow-y: auto;
 }

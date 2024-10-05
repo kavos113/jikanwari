@@ -38,6 +38,10 @@ const departmentQuery = ref<string>('')
 const titleQuery = ref<string>('')
 const lecturerQuery = ref<string>('')
 
+const setLecturerQuery = (value: string) => {
+  lecturerQuery.value = value
+}
+
 watch(gradesQuery, () => {
   query.value.grades = gradesQuery.value
   emits('changeQuery', query.value)
@@ -209,7 +213,8 @@ const depertments = {
       '広域教養科目',
       'キャリア科目'
     ]
-  }
+  },
+  選択解除: []
 }
 
 const isDepartmentMenuOpen = ref(false)
@@ -220,6 +225,10 @@ const closeDepartmentMenu = (key) => {
   departmentQuery.value = key
   isDepartmentMenuOpen.value = false
 }
+
+defineExpose({
+  setLecturerQuery
+})
 </script>
 
 <template>
@@ -294,9 +303,6 @@ const closeDepartmentMenu = (key) => {
         <input v-model="lecturerQuery" class="lecturerSearch" />
       </div>
     </div>
-  </div>
-  <div>
-    {{ query }}
   </div>
 </template>
 
@@ -412,6 +418,7 @@ tr:has(.periodHeader:hover) {
   width: 50%;
   position: absolute;
   top: 100%;
+  z-index: 2;
 }
 
 .searchBox {

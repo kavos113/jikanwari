@@ -4,9 +4,7 @@ import { insertCourse, needAction, updateCourse } from '../database/courses.js'
 import { BrowserWindow } from 'electron'
 
 const mainUrls = [
-  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=6&lang=JA', // 環社
-  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=10&lang=JA', // 初年専門
-  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=11&lang=JA' // 共通
+  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=7&lang=JA' // 教養
 ]
 
 const url2 = [
@@ -15,7 +13,9 @@ const url2 = [
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=2&lang=JA', //工学院
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=3&lang=JA', // 物質
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=5&lang=JA', // 生命
-  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=7&lang=JA' // 教養
+  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=6&lang=JA', // 環社
+  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=10&lang=JA', // 初年専門
+  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=11&lang=JA' // 共通
 ]
 
 export const scrape = async () => {

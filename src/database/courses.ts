@@ -105,6 +105,7 @@ const insertTimetable = async (courseId: number, course: CourseDetail) => {
   })
 }
 
+// TODO: fix
 export const updateCourse = async (course: CourseDetail, url: string) => {
   return new Promise((resolve, reject) => {
     db.run(
@@ -280,7 +281,7 @@ export const searchCourses = async (query: SearchQuery): Promise<CourseListItem[
              credits,
              lecture_type,
              language
-      FROM courses ORDER BY grade`
+      FROM courses`
     const params = []
 
     if (query.grades.length > 0) {
@@ -308,6 +309,8 @@ export const searchCourses = async (query: SearchQuery): Promise<CourseListItem[
         }
       }
     }
+
+    dbQuery += ' ORDER BY grade'
 
     db.all(dbQuery, params, (err, rows) => {
       if (err) {
@@ -338,6 +341,7 @@ export const searchCourses = async (query: SearchQuery): Promise<CourseListItem[
         SELECT day_of_week, period, room, course_id
         FROM timetable
         WHERE course_id IN (${courseIds.join(',')})
+        ORDER BY course_id, day_of_week, period
       `
 
       db.all(lecturerQuery, (err, lecturers) => {

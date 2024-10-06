@@ -30,7 +30,7 @@ const props = defineProps<{
 <style scoped>
 .wrapper {
   display: grid;
-  grid-template-rows: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 24px);
   width: 100%;
   height: 100%;
   font-size: 0.8rem;
@@ -42,6 +42,7 @@ const props = defineProps<{
   justify-content: center;
   align-items: center;
   height: 100%;
+  overflow: hidden;
 }
 
 .titleWrapper {

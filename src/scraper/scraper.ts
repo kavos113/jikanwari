@@ -4,10 +4,6 @@ import { insertCourse, needAction, updateCourse } from '../database/courses.js'
 import { BrowserWindow } from 'electron'
 
 const mainUrls = [
-  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=7&lang=JA' // 教養
-]
-
-const url2 = [
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=1&lang=JA', //理学院
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=4&lang=JA', // 情報
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=2&lang=JA', //工学院
@@ -15,8 +11,11 @@ const url2 = [
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=5&lang=JA', // 生命
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=6&lang=JA', // 環社
   'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=10&lang=JA', // 初年専門
-  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=11&lang=JA' // 共通
+  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=11&lang=JA', // 共通
+  'https://www.ocw.titech.ac.jp/index.php?module=General&action=T0100&GakubuCD=7&lang=JA' // 教養
 ]
+
+const url2 = []
 
 export const scrape = async () => {
   const mainWindow = BrowserWindow.getAllWindows()[0]
@@ -113,7 +112,12 @@ export const scrape_test = async () => {
 
   const start = performance.now()
 
-  const status = await needAction(course.code, course.sylbs_update)
+  const status = await needAction(
+    course.code,
+    course.sylbs_update,
+    course.title.title,
+    course.start
+  )
   //const status = await needAction('ART.T548', '2024/7/4')
   if (status === 'skip' || status === 'error') return
 

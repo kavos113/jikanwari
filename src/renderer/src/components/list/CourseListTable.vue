@@ -21,7 +21,7 @@ const timetable = ref<string[]>([])
 
 const openDetail = (i: number) => {
   emits('getCourseDetail', i)
-  emits('postTimetable', props.data[i])
+  emits('postTimetable', props.data.find((item) => item.id === i)!)
 }
 watch(props, () => {
   timetable.value = []

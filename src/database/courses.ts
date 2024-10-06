@@ -1,7 +1,15 @@
-import { CourseDetail, CourseListItem } from '../types/course.js'
+import { CourseDetail, CourseListItem, Lecturer, Timetable } from '../types/course.js'
 import { db } from './create.js'
 import { SearchQuery } from '../types/search.js'
 import { periodAdapter } from '../util/adapter.js'
+import {
+  CourseDetailFromDB,
+  CourseFromDB,
+  CourseId,
+  CourseSylbsUpdate,
+  LecturerFromDB,
+  TimetableFromDB
+} from '../types/database.js'
 
 export const insertCourse = async (course: CourseDetail, url: string) => {
   return new Promise((resolve, reject) => {
@@ -46,7 +54,7 @@ export const insertCourse = async (course: CourseDetail, url: string) => {
         course.english_title,
         course.start,
         url,
-        async (err, rows) => {
+        async (err, rows: CourseId[]) => {
           if (err) {
             console.error(err)
             reject('error')
@@ -63,7 +71,7 @@ export const insertCourse = async (course: CourseDetail, url: string) => {
 }
 
 const insertLecturers = async (courseId: number, course: CourseDetail) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     course.lecturer.forEach((lecturer) => {
       db.run(
         `
@@ -82,7 +90,7 @@ const insertLecturers = async (courseId: number, course: CourseDetail) => {
 }
 
 const insertTimetable = async (courseId: number, course: CourseDetail) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     course.timetable.forEach((timetable) => {
       db.run(
         `
@@ -146,7 +154,7 @@ export const updateCourse = async (course: CourseDetail, url: string) => {
         course.english_title,
         course.start,
         url,
-        async (err, rows) => {
+        async (err, rows: CourseId[]) => {
           if (err) {
             console.error(err)
             reject('error')
@@ -162,7 +170,7 @@ export const updateCourse = async (course: CourseDetail, url: string) => {
 }
 
 const updateLecturers = async (courseId: number, course: CourseDetail) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     db.run('DELETE FROM lecturers WHERE course_id = ?', courseId)
 
     course.lecturer.forEach((lecturer) => {
@@ -186,7 +194,7 @@ const updateLecturers = async (courseId: number, course: CourseDetail) => {
 }
 
 const updateTimetable = async (courseId: number, course: CourseDetail) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     db.run('DELETE FROM timetable WHERE course_id = ?', courseId)
 
     course.timetable.forEach((timetable) => {
@@ -222,7 +230,7 @@ export const needAction = async (
         code,
         title,
         start,
-        (err, row) => {
+        (err, row: CourseSylbsUpdate) => {
           if (err) {
             console.error(err)
             reject('error')
@@ -249,22 +257,26 @@ export const needAction = async (
 export const needActionTest = async (code: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
-      db.all(`SELECT sylbs_update FROM courses WHERE code = ? `, code, (err, rows) => {
-        if (err) {
-          console.error(err)
-          reject('error')
-        } else {
-          if (rows === undefined) {
-            resolve('insert')
+      db.all(
+        `SELECT sylbs_update FROM courses WHERE code = ? `,
+        code,
+        (err, rows: CourseSylbsUpdate[]) => {
+          if (err) {
+            console.error(err)
+            reject('error')
           } else {
-            if (rows.length > 1) {
-              resolve('update')
+            if (rows === undefined) {
+              resolve('insert')
             } else {
-              resolve('skip')
+              if (rows.length > 1) {
+                resolve('update')
+              } else {
+                resolve('skip')
+              }
             }
           }
         }
-      })
+      )
     })
   })
 }
@@ -282,7 +294,7 @@ export const searchCourses = async (query: SearchQuery): Promise<CourseListItem[
              lecture_type,
              language
       FROM courses`
-    const params = []
+    const params: string[] = []
 
     if (query.grades.length > 0) {
       dbQuery += ` WHERE grade IN (${query.grades.join(',')})`
@@ -312,24 +324,27 @@ export const searchCourses = async (query: SearchQuery): Promise<CourseListItem[
 
     dbQuery += ' ORDER BY grade'
 
-    db.all(dbQuery, params, (err, rows) => {
+    db.all(dbQuery, params, (err, rows: CourseFromDB[]) => {
       if (err) {
         console.log('error in firstselect')
         console.error(err)
         return reject('error')
       }
 
-      const courses: CourseDetail[] = rows.map((row) => ({
-        id: row.id,
-        code: row.code,
-        title: row.course_title,
-        english_title: row.english_title,
-        department: row.opening_department,
-        start: row.start,
-        credits: row.credits,
-        lecture_type: row.lecture_type,
-        language: row.language
-      }))
+      const courses: CourseDetail[] = rows.map(
+        (row) =>
+          ({
+            id: row.id,
+            code: row.code,
+            title: row.course_title,
+            english_title: row.english_title,
+            department: row.opening_department,
+            start: row.start,
+            credits: row.credits,
+            lecture_type: row.lecture_type,
+            language: row.language
+          }) as CourseDetail
+      )
 
       const courseIds = courses.map((course) => course.id)
       const lecturerQuery = `
@@ -344,14 +359,14 @@ export const searchCourses = async (query: SearchQuery): Promise<CourseListItem[
         ORDER BY course_id, day_of_week, period
       `
 
-      db.all(lecturerQuery, (err, lecturers) => {
+      db.all(lecturerQuery, (err, lecturers: LecturerFromDB[]) => {
         if (err) {
           console.log('error in secondselect')
           console.error(err)
           return reject('error')
         }
 
-        db.all(timetableQuery, (err, timetables) => {
+        db.all(timetableQuery, (err, timetables: TimetableFromDB[]) => {
           if (err) {
             console.error(err)
             console.log('error in thirdselect')
@@ -391,7 +406,7 @@ export const searchCourses = async (query: SearchQuery): Promise<CourseListItem[
 export const getCourse = async (id: number): Promise<CourseDetail> => {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
-      db.get('SELECT * FROM courses WHERE id = ?', id, (err, row) => {
+      db.get('SELECT * FROM courses WHERE id = ?', id, (err, row: CourseDetailFromDB) => {
         if (err) {
           console.error(err)
           reject('error')
@@ -420,13 +435,13 @@ export const getCourse = async (id: number): Promise<CourseDetail> => {
             FROM timetable
             WHERE course_id = ?
           `
-          db.all(lecturerQuery, row.id, (err, lecturers) => {
+          db.all(lecturerQuery, row.id, (err, lecturers: Lecturer[]) => {
             if (err) {
               console.error(err)
               reject('error')
             } else {
               course.lecturer = lecturers
-              db.all(timetableQuery, row.id, (err, timetables) => {
+              db.all(timetableQuery, row.id, (err, timetables: Timetable) => {
                 if (err) {
                   console.error(err)
                   reject('error')

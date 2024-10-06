@@ -14,27 +14,45 @@ const insertUserTimetable = async (userTimetable: UserTimetable): Promise<void> 
       userTimetable.day_of_week,
       userTimetable.period
     )
-    resolve('success')
+    resolve()
   })
 }
 
-const deleteUserTimetableAll = async (year: number, quarter: number): Promise<void> => {
+const deleteUserTimetableByPeriod = async (
+  year: number,
+  quarter: number,
+  day_of_week: string,
+  period: number
+): Promise<void> => {
   return new Promise((resolve, reject) => {
     db.run(
       `
     DELETE FROM user_timetables
-    WHERE year = ? AND quarter = ?
+    WHERE year = ? AND quarter = ? AND day_of_week = ? AND period = ?
   `,
       year,
-      quarter
+      quarter,
+      day_of_week,
+      period,
+      (err) => {
+        if (err) {
+          reject(err)
+        }
+
+        resolve()
+      }
     )
-    resolve('success')
   })
 }
 
 export const postUserTimetable = async (userTimetables: UserTimetable[]): Promise<void> => {
-  await deleteUserTimetableAll(userTimetables[0].year, userTimetables[0].quarter)
   for (const userTimetable of userTimetables) {
+    await deleteUserTimetableByPeriod(
+      userTimetable.year,
+      userTimetable.quarter,
+      userTimetable.day_of_week,
+      userTimetable.period
+    )
     await insertUserTimetable(userTimetable)
   }
 }
@@ -66,7 +84,7 @@ export const getUserTimetable = async (year: number, quarter: number): Promise<U
 
         new Promise((resolve, reject) => {
           db.serialize(() => {
-            if (userTimetables.length === 0) resolve()
+            if (userTimetables.length === 0) resolve([])
             for (let i = 0; i < userTimetables.length; i++) {
               const userTimetable = userTimetables[i]
               db.get(

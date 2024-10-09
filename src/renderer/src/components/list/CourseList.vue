@@ -17,6 +17,7 @@ const emits = defineEmits<{
 
 const isShowCourseDetail = ref<boolean>(false)
 const isShowCourseDetailOverlay = ref<boolean>(false)
+const isSearching = ref<boolean>(false)
 
 const courseListHeader = ref<InstanceType<typeof CourseListHeader> | null>(null)
 
@@ -58,8 +59,10 @@ const postTimetable = async (course: CourseListItem) => {
 }
 
 const search = async (query: SearchQuery) => {
-  console.log(JSON.parse(JSON.stringify(query)))
+  // console.log(JSON.parse(JSON.stringify(query)))
+  isSearching.value = true
   const res = await window.api.search(JSON.parse(JSON.stringify(query)))
+  isSearching.value = false
 
   data = res
   dbData.value = res
@@ -129,6 +132,7 @@ defineExpose({
     />
     <CourseListTable
       :data="dbData"
+      :is-searching="isSearching"
       @get-course-detail="openDetail"
       @post-timetable="postTimetable"
       @set-lecturer="setLecturer"

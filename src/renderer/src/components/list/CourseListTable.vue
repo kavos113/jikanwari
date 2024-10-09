@@ -6,6 +6,7 @@ import { periodStringAdapter } from '../../../../util/adapter.js'
 
 const props = defineProps<{
   data: CourseListItem[]
+  isSearching: boolean
 }>()
 
 const emits = defineEmits<{
@@ -113,6 +114,7 @@ const sort = (target: SortTarget) => {
   <input id="courseDetail" v-model="isDetail" type="checkbox" />
   <label for="courseDetail">詳細表示</label>
   <span class="dataLength">全{{ data.length }}件</span>
+  <span v-if="props.isSearching" class="isSearching">Loading...</span>
   <div v-if="isDetail">
     <CourseListCard v-for="item in data" :key="item.code" :course="item" />
   </div>
@@ -240,5 +242,10 @@ const sort = (target: SortTarget) => {
 
 .canSort {
   cursor: pointer;
+}
+
+.isSearching {
+  margin-left: 1rem;
+  margin-bottom: 0.5rem;
 }
 </style>

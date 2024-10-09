@@ -232,7 +232,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="wrapper">
+  <div class="headerWrapper">
     <div class="grades">
       <p>番台</p>
       <ul class="checkboxList">
@@ -315,10 +315,11 @@ defineExpose({
   padding: 0;
 }
 
-.wrapper {
+.headerWrapper {
   display: flex;
   flex-direction: row;
   gap: 1rem;
+  overflow: visible;
 }
 
 .checkboxTable {
@@ -347,7 +348,7 @@ defineExpose({
 }
 
 .tableItem:hover {
-  box-shadow: 0 0 10px #42d392;
+  box-shadow: 0 0 10px var(--color-main);
 }
 
 .periodHeader {
@@ -364,7 +365,7 @@ defineExpose({
 }
 
 .tableCheckbox:checked + .tableItem {
-  background-color: #42d392;
+  background-color: var(--color-main);
 }
 
 tr {
@@ -373,7 +374,7 @@ tr {
 }
 
 tr:has(.periodHeader:hover) {
-  box-shadow: 0 0 10px #42d392;
+  box-shadow: 0 0 10px var(--color-main);
 }
 
 .dayHeaderItem {
@@ -381,23 +382,23 @@ tr:has(.periodHeader:hover) {
 }
 
 .checkboxTable:has(.col-2:hover) td:nth-child(2) {
-  background-color: rgba(66, 211, 146, 0.2);
+  background-color: rgba(127, 150, 194, 0.5);
 }
 
 .checkboxTable:has(.col-3:hover) td:nth-child(3) {
-  background-color: rgba(66, 211, 146, 0.2);
+  background-color: rgba(127, 150, 194, 0.5);
 }
 
 .checkboxTable:has(.col-4:hover) td:nth-child(4) {
-  background-color: rgba(66, 211, 146, 0.2);
+  background-color: rgba(127, 150, 194, 0.5);
 }
 
 .checkboxTable:has(.col-5:hover) td:nth-child(5) {
-  background-color: rgba(66, 211, 146, 0.2);
+  background-color: rgba(127, 150, 194, 0.5);
 }
 
 .checkboxTable:has(.col-6:hover) td:nth-child(6) {
-  background-color: rgba(66, 211, 146, 0.2);
+  background-color: rgba(127, 150, 194, 0.5);
 }
 
 .departmentQuery {
@@ -411,11 +412,11 @@ tr:has(.periodHeader:hover) {
 }
 
 .departmentQuery:hover {
-  box-shadow: 0 0 10px #42d392;
+  box-shadow: 0 0 10px var(--color-main);
 }
 
 .menu {
-  width: 50%;
+  width: 60%;
   position: absolute;
   top: 100%;
   z-index: 2;

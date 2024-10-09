@@ -90,7 +90,7 @@ const clickSubItem = (key) => {
   font-size: 12px;
   background-color: #fff;
   border: 1px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px var(--color-main);
 }
 
 .menuItem {
@@ -138,7 +138,7 @@ const clickSubItem = (key) => {
   width: 17em;
   background-color: #fff;
   border: 1px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px var(--color-main);
 }
 
 .arrow {

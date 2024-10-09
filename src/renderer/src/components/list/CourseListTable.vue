@@ -112,6 +112,7 @@ const sort = (target: SortTarget) => {
 <template>
   <input id="courseDetail" v-model="isDetail" type="checkbox" />
   <label for="courseDetail">詳細表示</label>
+  <span class="dataLength">全{{ data.length }}件</span>
   <div v-if="isDetail">
     <CourseListCard v-for="item in data" :key="item.code" :course="item" />
   </div>
@@ -120,11 +121,11 @@ const sort = (target: SortTarget) => {
       <thead>
         <tr>
           <th>コード</th>
-          <th @click="sort('title')">講義名</th>
-          <th @click="sort('lecturer')">担当</th>
+          <th class="canSort" @click="sort('title')">講義名</th>
+          <th class="canSort" @click="sort('lecturer')">担当</th>
           <th>時間割</th>
-          <th @click="sort('start')">開講学期</th>
-          <th @click="sort('department')">開講</th>
+          <th class="canSort" @click="sort('start')">開講学期</th>
+          <th class="canSort" @click="sort('department')">開講</th>
           <th>単位数</th>
         </tr>
       </thead>
@@ -194,7 +195,7 @@ const sort = (target: SortTarget) => {
 }
 
 .table tbody tr:has(.openDetail:hover) {
-  box-shadow: 0 0 10px #42d392;
+  box-shadow: 0 0 10px var(--color-main);
 }
 
 .code p {
@@ -228,6 +229,16 @@ const sort = (target: SortTarget) => {
 }
 
 .lecturerText:hover {
-  color: #42d392;
+  color: var(--color-sub);
+}
+
+.dataLength {
+  font-size: 12px;
+  margin-left: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.canSort {
+  cursor: pointer;
 }
 </style>

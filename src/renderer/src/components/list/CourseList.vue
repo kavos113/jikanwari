@@ -120,7 +120,7 @@ defineExpose({
 
 <template>
   <div class="wrapper">
-    <h1>Course List</h1>
+    <h1 class="appTitle">Tokyo Tech Timetable</h1>
     <CourseListHeader
       ref="courseListHeader"
       @change-query="search"
@@ -150,7 +150,7 @@ defineExpose({
 <style scoped>
 .wrapper {
   overflow-x: visible;
-  overflow-y: auto;
+  height: calc(100vh - 2rem);
 }
 
 .detail {
@@ -192,5 +192,21 @@ defineExpose({
 
 .overlayZIndex {
   z-index: 1;
+}
+
+.appTitle {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  border-bottom: 4px solid var(--color-main);
+  position: relative;
+}
+
+.appTitle:before {
+  content: '';
+  border-bottom: 2px solid var(--color-sub);
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
 }
 </style>

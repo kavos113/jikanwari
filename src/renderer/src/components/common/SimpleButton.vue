@@ -21,6 +21,6 @@
 }
 
 .button:hover {
-  border-color: #647eff;
+  border-color: var(--color-main);
 }
 </style>

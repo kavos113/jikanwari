@@ -84,8 +84,18 @@ const props = defineProps<{
 
 .title {
   margin-bottom: 1rem;
-  border-bottom: 2px solid #42d392;
+  border-bottom: 4px solid var(--color-main);
   padding: 1rem 0 0.5rem;
+  position: relative;
+}
+
+.title:before {
+  content: '';
+  border-bottom: 2px solid var(--color-sub);
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
 }
 
 .jaTitle {

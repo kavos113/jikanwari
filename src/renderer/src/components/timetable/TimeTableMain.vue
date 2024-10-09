@@ -154,7 +154,7 @@ watch(props, () => {
 }
 
 .clickable:hover {
-  box-shadow: 0 0 10px #42d392;
+  box-shadow: 0 0 10px var(--color-main);
 }
 
 .clickableEdit {
